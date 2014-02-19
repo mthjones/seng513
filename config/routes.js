@@ -17,4 +17,8 @@ module.exports = function(app) {
                 res.redirect(302, '/users/new');
             });
     });
+
+    app.get('/sessions/new', function(req, res, next) {
+        res.render('sessions/new');
+    });
 };
