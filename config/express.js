@@ -16,5 +16,10 @@ module.exports = function(app) {
         app.use(express.urlencoded());
         app.use(express.json());
         app.use(express.methodOverride());
+        app.use(app.router);
+        app.use(function(req, res, next) {
+            res.status(404);
+            res.render('404');
+        });
     });
 };
