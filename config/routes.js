@@ -1,4 +1,5 @@
-var db = require('./db');
+var passport = require('passport'),
+    db = require('./db');
 
 module.exports = function(app) {
     app.get('/users/new', function(req, res, next) {
@@ -22,16 +23,9 @@ module.exports = function(app) {
         res.render('sessions/new');
     });
 
-    app.post('/sessions/create', function(req, res, next) {
-        db.User.auth(req.body.username, req.body.password)
-            .success(function(user) {
-                if (user == null) {
-                    // TODO: Use connect-flash to get error message for form
-                    res.redirect(302, '/sessions/new');
-                } else {
-                    // TODO: Set the session cookie
-                    res.redirect(302, '/feed');
-                }
-            });
-    });
+    app.post('/sessions/create', passport.authenticate('local', {
+        successRedirect: '/feed',
+        failureRedirect: '/sessions/new',
+        failureFlash: true
+    }));
 };
