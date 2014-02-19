@@ -15,3 +15,17 @@ passport.use(new LocalStrategy(function(username, password, done) {
         })
         .error(done);
 }));
+
+passport.serializeUser(function(user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+    db.User.find(id)
+        .success(function(user) {
+            done(null, user);
+        })
+        .error(function(err) {
+            done(err, null);
+        });
+});
