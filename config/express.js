@@ -2,7 +2,6 @@ var express = require('express'),
     path = require('path'),
     config = require('./config');
 
-
 module.exports = function(app) {
     app.configure(function() {
         app.use(express.compress());
@@ -18,6 +17,7 @@ module.exports = function(app) {
         app.use(express.methodOverride());
         app.use(app.router);
         app.use(function(err, req, res, next) {
+            console.error(err.stack);
             res.status(500);
             res.render('500');
         });
