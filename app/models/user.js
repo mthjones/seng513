@@ -4,9 +4,10 @@ module.exports = function(sequelize, DataTypes) {
         username: DataTypes.STRING,
         password: DataTypes.STRING
     }, {
-        classMethods: {
-            auth: function(username, password) {
-                return User.find({where: {username: username, password: password}});
+        instanceMethods: {
+            validPassword: function(password) {
+                // TODO: Replace this with hash check
+                return this.password === password;
             }
         }
     });
