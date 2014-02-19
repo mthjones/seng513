@@ -6,6 +6,7 @@
     "express": "~3.4.8",
     "hogan-express": "~0.5.2",
     "sequelize": "~1.7.0-rc6",
-    "mysql": "~2.1.0"
+    "mysql": "~2.1.0",
+    "lodash": "~2.4.1"
   }
 }
