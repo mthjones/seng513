@@ -9,6 +9,7 @@
     "mysql": "~2.1.0",
     "lodash": "~2.4.1",
     "passport": "~0.2.0",
-    "passport-local": "~0.1.6"
+    "passport-local": "~0.1.6",
+    "connect-flash": "~0.1.1"
   }
 }
