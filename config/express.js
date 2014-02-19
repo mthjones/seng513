@@ -1,6 +1,7 @@
 var express = require('express'),
     path = require('path'),
-    passport = require('passport');
+    passport = require('passport'),
+    flash = require('connect-flash'),
     config = require('./config');
 
 module.exports = function(app) {
@@ -19,6 +20,7 @@ module.exports = function(app) {
         app.use(express.json());
         app.use(express.methodOverride());
         app.use(express.session({secret: 'super-secret'}));
+        app.use(flash());
         app.use(passport.initialize());
         app.use(passport.session());
 
