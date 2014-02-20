@@ -1,4 +1,5 @@
 var passport = require('passport'),
+    ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
     db = require('./db');
 
 module.exports = function(app) {
@@ -30,4 +31,8 @@ module.exports = function(app) {
         failureRedirect: '/sessions/new',
         failureFlash: true
     }));
+
+    app.get('/feed', ensureLoggedIn('/sessions/new'), function(req, res, next) {
+        res.send();
+    });
 };
