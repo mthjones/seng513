@@ -6,6 +6,9 @@
                     <h3 class="panel-title">Register</h3>
                 </div>
                 <div class="panel-body">
+                    {{#error}}
+                    <div class="alert alert-danger"><strong>Error!</strong> {{ . }}</div>
+                    {{/error}}
                     <form accept-charset="UTF-8" role="form" action="/users/create" method="post">
                         <fieldset>
                             <div class="form-group">
