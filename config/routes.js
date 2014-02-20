@@ -3,6 +3,7 @@ var passport = require('passport'),
 
 module.exports = function(app) {
     app.get('/users/new', function(req, res, next) {
+        res.locals = { error: req.flash('error') };
         res.render('users/new');
     });
 
@@ -20,6 +21,7 @@ module.exports = function(app) {
     });
 
     app.get('/sessions/new', function(req, res, next) {
+        res.locals = { error: req.flash('error') };
         res.render('sessions/new');
     });
 
