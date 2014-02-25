@@ -7,11 +7,10 @@ var express = require('express'),
 module.exports = function(app) {
     app.configure(function() {
         app.set('port', config.port.toString());
+
         app.set('views', path.join(config.root, 'app', 'views'));
-        app.set('view engine', 'html');
-        app.set('layout', 'layout');
+        app.set('view engine', 'jade');
         app.enable('view cache');
-        app.engine('html', require('hogan-express'));
 
         app.use(express.compress());
         app.use(express.static(path.join(config.root, 'public')));

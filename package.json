@@ -4,13 +4,13 @@
   "private": true,
   "dependencies": {
     "express": "~3.4.8",
-    "hogan-express": "~0.5.2",
-    "sequelize": "~1.7.0-rc6",
+    "sequelize": "~1.7.0-rc9",
     "mysql": "~2.1.0",
     "lodash": "~2.4.1",
     "passport": "~0.2.0",
     "passport-local": "~0.1.6",
     "connect-flash": "~0.1.1",
-    "connect-ensure-login": "~0.1.1"
+    "connect-ensure-login": "~0.1.1",
+    "jade": "~1.1.5"
   }
 }
