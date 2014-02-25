@@ -46,10 +46,6 @@ module.exports = function(app) {
         res.locals = {
             photoRows: [[]]
         };
-        res.render('photos/list', {
-            partials: {
-                photo: 'photos/partials/photo'
-            }
-        })
+        res.render('photos/list');
     });
 };
