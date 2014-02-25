@@ -44,7 +44,7 @@ module.exports = function(app) {
 
     app.get('/feed', ensureLoggedIn('/sessions/new'), function(req, res, next) {
         res.locals = {
-            photoRows: [[]]
+            photoRows: [[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]]]
         };
         res.render('photos/list');
     });

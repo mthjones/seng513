@@ -1,7 +1,8 @@
 extends ../layout
 
 block append content
-  each photo in photoRows
+  each photoRow in photoRows
     .row
-      include partials/photo
+      each photo in photoRow
+        include partials/photo
 
