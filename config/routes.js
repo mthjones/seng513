@@ -3,6 +3,10 @@ var passport = require('passport'),
     db = require('./db');
 
 module.exports = function(app) {
+    app.get('/', function(req, res, next) {
+        res.redirect(302, '/feed');
+    });
+
     app.get('/users/new', function(req, res, next) {
         res.locals = { error: req.flash('error') };
         res.render('users/new');
@@ -12,11 +16,17 @@ module.exports = function(app) {
         var user = db.User.build(req.body);
         user.save()
             .success(function() {
-                // TODO: Set a session id
-                res.redirect(302, '/feed');
+                req.login(user, function(err) {
+                    if (err) {
+                        return next(err);
+                    }
+                    return res.redirect(302, '/feed');
+                });
             })
             .error(function(err) {
-                // TODO: Use connect-flash to get error message for form
+                if (err.code === 'ER_DUP_ENTRY') {
+                    req.flash('error', 'Username taken');
+                }
                 res.redirect(302, '/users/new');
             });
     });
@@ -33,6 +43,13 @@ module.exports = function(app) {
     }));
 
     app.get('/feed', ensureLoggedIn('/sessions/new'), function(req, res, next) {
-        res.send();
+        res.locals = {
+            photoRows: [[]]
+        };
+        res.render('photos/list', {
+            partials: {
+                photo: 'photos/partials/photo'
+            }
+        })
     });
 };
