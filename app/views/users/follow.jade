@@ -3,5 +3,10 @@ extends ../layout
 block content
   p Click to follow user:
   form(accept-charset="UTF-8", role="form", action="/users/follow/new", method="post")
-    each username in userdata
+    each username in notfollowed_userdata
+      input(type='submit', name='usernameInput', value=username)
+  br
+  p Click to unfollow user:
+  form(accept-charset="UTF-8", role="form", action="/users/follow/delete", method="post")
+    each username in followed_userdata
       input(type='submit', name='usernameInput', value=username)
