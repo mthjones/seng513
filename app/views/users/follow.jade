@@ -1,0 +1,7 @@
+extends ../layout
+
+block content
+  p Click to follow user:
+  form(accept-charset="UTF-8", role="form", action="/users/follow/new", method="post")
+    each username in userdata
+      input(type='submit', name='usernameInput', value=username)

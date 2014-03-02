@@ -7,6 +7,64 @@ module.exports = function(app) {
         res.redirect(302, '/feed');
     });
 
+	app.get('/users/follow', ensureLoggedIn('/sessions/new'), function(req, res, next) {
+		db.sequelize.query("SELECT * FROM Users").success(function(myTableRows) {
+            var userArray = new Array();
+            myTableRows.forEach(function(entry)
+            {
+                if(entry.username != req.user.username)
+                    userArray.push(entry.username);
+            });
+            
+            res.render('users/follow', {
+                userdata: userArray
+			});
+            
+			return;
+		})
+    });
+    
+    app.post('/users/follow/new', ensureLoggedIn('/sessions/new'), function(req, res, next) {
+        //console.log('User: ' + req.user.username + " wants to follow user: " + req.body.usernameInput);
+        
+        db.User.find({where: {username: req.user.username}})
+        .success(function(user_follower) {
+            if (!user_follower)
+            {
+                res.redirect(302, '/feed');
+                return;
+            }
+            
+            db.User.find({where: {username: req.body.usernameInput}})
+            .success(function(user_followee) 
+            {
+                if (!user_followee)
+                {
+                    res.redirect(302, '/feed');
+                    return;
+                }
+                
+               //console.log("Follower: " + user.username + " has id: " + user.id + " --- Followee: " + user2.username + " has id: " + user2.id);
+               var newRelation = {
+                    follower: user_follower.id,
+                    followee: user_followee.id
+               };
+               var relationRow = db.Follow_relation.build(newRelation);
+               
+               relationRow.save().success(function()
+               {
+                    console.log("Saved follow relation");
+               }).error(function(error)
+               {
+                    console.log("Error saving follow relation: " + error);
+               });
+               
+            });
+        });
+
+        res.redirect(302, '/feed');
+    });
+    
     app.get('/users/new', function(req, res, next) {
         res.locals = { error: req.flash('error') };
         res.render('users/new');
@@ -48,4 +106,9 @@ module.exports = function(app) {
         };
         res.render('photos/list');
     });
+	
+	app.get('/logout', ensureLoggedIn('/sessions/new'), function(req, res, next) {
+		req.logout()
+		res.redirect(302, '/sessions/new');
+	});
 };
