@@ -14,6 +14,11 @@ module.exports = function(sequelize, DataTypes) {
             allowNull: false
         }
     }, {
+        classMethods: {
+            associate: function(models) {
+                User.hasMany(models.Photo);
+            }
+        },
         instanceMethods: {
             validPassword: function(password) {
                 // TODO: Replace this with hash check
