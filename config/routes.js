@@ -1,6 +1,8 @@
-var passport = require('passport'),
-    ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
-    db = require('./db');
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
+    db = require('./db'),
+    usersCtrl = require('../app/controllers/users'),
+    sessionsCtrl = require('../app/controllers/sessions'),
+    feedCtrl = require('../app/controllers/feed');
 
 module.exports = function(app) {
     app.get('/', function(req, res, next) {
@@ -122,50 +124,12 @@ module.exports = function(app) {
         res.redirect(302, '/feed');
     });
     
-    app.get('/users/new', function(req, res, next) {
-        res.locals = { error: req.flash('error') };
-        res.render('users/new');
-    });
+    app.get('/users/new', usersCtrl.newForm);
+    app.post('/users/create', usersCtrl.create);
 
-    app.post('/users/create', function(req, res, next) {
-        var user = db.User.build(req.body);
-        user.save()
-            .success(function() {
-                req.login(user, function(err) {
-                    if (err) {
-                        return next(err);
-                    }
-                    return res.redirect(302, '/feed');
-                });
-            })
-            .error(function(err) {
-                if (err.code === 'ER_DUP_ENTRY') {
-                    req.flash('error', 'Username taken');
-                }
-                res.redirect(302, '/users/new');
-            });
-    });
+    app.get('/sessions/new', sessionsCtrl.newForm);
+    app.post('/sessions/create', sessionsCtrl.create);
+    app.get('/logout', ensureLoggedIn('/sessions/new'), sessionsCtrl.logout);
 
-    app.get('/sessions/new', function(req, res, next) {
-        res.locals = { error: req.flash('error') };
-        res.render('sessions/new');
-    });
-
-    app.post('/sessions/create', passport.authenticate('local', {
-        successRedirect: '/feed',
-        failureRedirect: '/sessions/new',
-        failureFlash: true
-    }));
-
-    app.get('/feed', ensureLoggedIn('/sessions/new'), function(req, res, next) {
-        res.locals = {
-            photoRows: [[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]]]
-        };
-        res.render('photos/list');
-    });
-	
-	app.get('/logout', ensureLoggedIn('/sessions/new'), function(req, res, next) {
-		req.logout()
-		res.redirect(302, '/sessions/new');
-	});
+    app.get('/feed', ensureLoggedIn('/sessions/new'), feedCtrl.show);
 };
