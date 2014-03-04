@@ -1,4 +1,4 @@
-var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
+var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn,
     db = require('./db'),
     usersCtrl = require('../app/controllers/users'),
     sessionsCtrl = require('../app/controllers/sessions'),
