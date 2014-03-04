@@ -1,4 +1,5 @@
-var passport = require('passport');
+var passport = require('passport'),
+    db = require('../../config/db');
 
 module.exports = {
     newForm: function(req, res, next) {

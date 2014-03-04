@@ -1,3 +1,6 @@
+var db = require('../../config/db'),
+    uploader = require('../../lib/image_uploader');
+
 module.exports = {
     newForm: function(req, res, next) {
         res.locals = { error: req.flash('error') };
