@@ -2,7 +2,8 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn;
     db = require('./db'),
     usersCtrl = require('../app/controllers/users'),
     sessionsCtrl = require('../app/controllers/sessions'),
-    feedCtrl = require('../app/controllers/feed');
+    feedCtrl = require('../app/controllers/feed'),
+    photosCtrl = require('../app/controllers/photos');
 
 module.exports = function(app) {
     app.get('/', function(req, res, next) {
@@ -132,4 +133,7 @@ module.exports = function(app) {
     app.get('/logout', ensureLoggedIn('/sessions/new'), sessionsCtrl.logout);
 
     app.get('/feed', ensureLoggedIn('/sessions/new'), feedCtrl.show);
+
+    app.get('/photos/new', ensureLoggedIn('/sessions/new'), photosCtrl.newForm);
+    app.post('/photos/create', ensureLoggedIn('/sessions/new'), photosCtrl.create);
 };
