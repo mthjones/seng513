@@ -3,6 +3,7 @@ var env = process.env.NODE_ENV || "development";
 
 var config = {
     development: {
+        envname: "development",
         port: 9000,
         root: path.normalize(path.join(__dirname, '..')),
         db: {
@@ -18,6 +19,7 @@ var config = {
         }
     },
     production: {
+        envname: "production"
         // Fill this in with the server information
     }
 };
