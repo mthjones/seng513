@@ -1,7 +1,8 @@
 module.exports = function(sequelize, DataTypes) {
     var Photo = sequelize.define('Photo', {
         filepath: DataTypes.STRING,
-        name: DataTypes.STRING
+        name: DataTypes.STRING,
+        contentType: DataTypes.STRING
     }, {
         classMethods: {
             associate: function(models) {
