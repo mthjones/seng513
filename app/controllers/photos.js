@@ -8,7 +8,11 @@ module.exports = {
     },
 
     create: function(req, res, next) {
-        console.log(req.files);
+        uploader.upload(req).then(function() {
+            console.log('uploaded');
+        }).catch(function(err) {
+            console.log(err);
+        });
         res.redirect(302, '/feed');
     }
 };
