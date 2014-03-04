@@ -8,8 +8,8 @@ module.exports = {
     },
 
     create: function(req, res, next) {
-        uploader.upload(req).then(function() {
-            console.log('uploaded');
+        uploader.upload(req).then(function(file) {
+            console.log(file);
         }).catch(function(err) {
             console.log(err);
         });
