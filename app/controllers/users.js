@@ -26,10 +26,13 @@ module.exports = {
     },
 
     view: function(req, res, next) {
-        db.User.find({where: {id: req.params.id}}).then(function(user) {
-            console.log(user);
-        }).catch(function(err) {
-            console.log(err);
+        db.User.find(req.params.id).then(function(user) {
+            if (user) {
+                res.locals = {user: user};
+                res.render('users/view');
+            } else {
+                res.status(404).render('404');
+            }
         });
     },
 
