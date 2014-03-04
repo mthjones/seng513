@@ -16,7 +16,7 @@ module.exports = {
                 res.redirect(302, '/photos/new');
             });
         }).catch(function(err) {
-            req.flash('error', 'Photo upload error');
+            req.flash('error', err);
             res.redirect(302, '/photos/new');
         });
     }
