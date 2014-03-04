@@ -3,8 +3,9 @@ var ensureLoggedIn = require('connect-ensure-login').ensureLoggedIn,
     usersCtrl = require('../app/controllers/users'),
     sessionsCtrl = require('../app/controllers/sessions'),
     feedCtrl = require('../app/controllers/feed'),
-    photosCtrl = require('../app/controllers/photos');
-
+    photosCtrl = require('../app/controllers/photos'),
+    config = require('./config');
+    
 module.exports = function(app) {
     app.get('/', function(req, res, next) {
         res.redirect(302, '/feed');

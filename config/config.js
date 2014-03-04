@@ -12,6 +12,7 @@ var config = {
             username: 'root',
             password: null
         },
+        clear_password: 1234,
         setup: function(db, app) {
             return db.User.build({name: 'test', username: 'test', password: 'test'}).save();
         }
