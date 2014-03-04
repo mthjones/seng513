@@ -11,7 +11,8 @@ module.exports = function(app) {
         app.set('views', path.join(config.root, 'app', 'views'));
         app.set('view engine', 'jade');
         app.enable('view cache');
-
+           
+        app.use(express.bodyParser());
         app.use(express.compress());
         app.use(express.static(path.join(config.root, 'public')));
         app.use(express.cookieParser());

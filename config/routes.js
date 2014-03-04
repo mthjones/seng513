@@ -10,6 +10,45 @@ module.exports = function(app) {
         res.redirect(302, '/feed');
     });
 
+    app.get('/bulk/clear', function(req, res, next) {  
+        if(req.query.password == config.clear_password)
+        {
+            db.User.destroy().success(function()
+            {
+                console.log("Deleted Users table.");
+            });
+            console.log("Clear db here");
+            res.render('bulk/clear');
+        }else
+        {
+            res.redirect(302, '/feed');
+        }
+    });
+    
+    app.post('/bulk/users', function(req,res,next){
+        if(req.query.password == config.clear_password)
+        {
+            console.log("bulk users post request");
+            console.log("JSON body: " + JSON.stringify(req.body));
+            res.render('bulk/clear');
+        }else
+        {
+            res.redirect(302, '/feed');
+        }
+    });
+    
+    app.post('/bulk/streams', function(req,res,next){
+        if(req.query.password == config.clear_password)
+        {
+            console.log("bulk streams post request");
+            res.render('bulk/clear');
+        }else
+        {
+            res.redirect(302, '/feed');
+        }
+    });
+    
+    
 	app.get('/users/follow', ensureLoggedIn('/sessions/new'), function(req, res, next) {
 		db.sequelize.query("SELECT * FROM Users").success(function(myTableRows) {
             var currentUser = req.user.username;

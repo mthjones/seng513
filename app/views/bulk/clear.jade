@@ -1,0 +1,13 @@
+extends ../layout
+
+block content
+  br
+  p Upload the users json file:
+  form(accept-charset="UTF-8", role="form", action="/bulk/users?password=1234", method="post", enctype="application/json")
+      input(type='file', name='fileUpload')
+      input(type='submit', name='submitUsersFile', value='Submit')
+  hr
+  p  Upload the photo stream json file:
+  form(accept-charset="UTF-8", role="form", action="/bulk/streams?password=1234", method="post")
+      input(type='file', name='fileUpload')
+      input(type='submit', name='submitStreamsFile', value='Submit')
