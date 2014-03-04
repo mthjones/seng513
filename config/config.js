@@ -11,6 +11,9 @@ var config = {
             port: 3306,
             username: 'root',
             password: null
+        },
+        setup: function(db, app) {
+            return db.User.build({name: 'test', username: 'test', password: 'test'}).save();
         }
     },
     production: {

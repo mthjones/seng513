@@ -9,9 +9,7 @@ require('./config/express')(app);
 require('./config/routes')(app);
 
 db.sequelize.sync({force: true}).complete(function(err) {
-    if (err) {
-        throw err;
-    } else {
-        app.listen(config.port);
-    }
+    if (err) throw err;
+    if (config.setup) config.setup(db, app);
+    app.listen(config.port);
 });
