@@ -9,7 +9,7 @@ module.exports = {
 
     create: function(req, res, next) {
         uploader.upload(req).then(function(file) {
-            db.Photo.create({filepath: file.filename, name: file.filename, contentType: file.contentType}).then(function() {
+            db.Photo.create({filepath: file.filepath, name: file.filename, contentType: file.contentType}).then(function() {
                 console.log('successfully uploaded and stored');
                 res.redirect(302, '/feed');
             }).catch(function(err) {
