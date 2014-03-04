@@ -52,11 +52,12 @@ module.exports = function(app) {
 		});
     });
 
-    app.post('/users/follow/new', ensureLoggedIn('/sessions/new'), usersCtrl.follow);
-    app.post('/users/follow/delete', ensureLoggedIn('/sessions/new'), usersCtrl.unfollow);
-
     app.get('/users/new', usersCtrl.newForm);
     app.post('/users/create', usersCtrl.create);
+    app.get('/users/:id', usersCtrl.view);
+
+    app.post('/users/follow/new', ensureLoggedIn('/sessions/new'), usersCtrl.follow);
+    app.post('/users/follow/delete', ensureLoggedIn('/sessions/new'), usersCtrl.unfollow);
 
     app.get('/sessions/new', sessionsCtrl.newForm);
     app.post('/sessions/create', sessionsCtrl.create);

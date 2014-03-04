@@ -26,7 +26,11 @@ module.exports = {
     },
 
     view: function(req, res, next) {
-
+        db.User.find({where: {id: req.params.id}}).then(function(user) {
+            console.log(user);
+        }).catch(function(err) {
+            console.log(err);
+        });
     },
 
     follow: function(req, res, next) {
