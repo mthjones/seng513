@@ -20,7 +20,7 @@ module.exports = function(app) {
         app.use(express.urlencoded());
         app.use(express.json());
         app.use(express.methodOverride());
-        app.use(express.session({secret: 'super-secret'}));
+        app.use(express.session({secret: 'super-secret', key: 'sid'}));
         app.use(flash());
         app.use(passport.initialize());
         app.use(passport.session());
