@@ -16,6 +16,11 @@ module.exports = {
                 console.log("Deleted Follow_relation table.");
             });
             
+            db.Photo.destroy().success(function()
+            {
+                console.log("Deleted Photos table.");
+            });
+            
             console.log("Clear db here");
             //res.render('bulk/clear');
         }
@@ -82,8 +87,8 @@ module.exports = {
                 
                 var photoBody = 
                 {
-                    createdAt: unparsedPhoto.timestamp,
-                    updatedAt: unparsedPhoto.timestamp,
+                    createdAt: new Date(unparsedPhoto.timestamp),
+                    //updatedAt: new Date(unparsedPhoto.timestamp),
                     filepath: unparsedPhoto.path,
                     name: path.substr(path.lastIndexOf("/") + 1, path.lastIndexOf(".") - path.lastIndexOf("/") - 1),
                     UserId: unparsedPhoto.user_id,
