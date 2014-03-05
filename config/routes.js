@@ -73,5 +73,6 @@ module.exports = function(app) {
 
     app.get('/photos/new', ensureLoggedIn('/sessions/new'), photosCtrl.newForm);
     app.post('/photos/create', ensureLoggedIn('/sessions/new'), photosCtrl.create);
+    app.get('/photos/thumbnail/:id.:ext', ensureLoggedIn('/sessions/new'), photosCtrl.thumbnail);
     app.get('/photos/:id.:ext', ensureLoggedIn('/sessions/new'), photosCtrl.view);
 };

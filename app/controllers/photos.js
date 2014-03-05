@@ -1,6 +1,7 @@
 var db = require('../../config/db'),
     uploader = require('../../lib/image_uploader'),
-    fs = require('fs');
+    fs = require('fs'),
+    gm = require('gm');
 
 module.exports = {
     newForm: function(req, res, next) {
@@ -26,7 +27,10 @@ module.exports = {
                 res.status(404).render('404');
             } else {
                 res.status(200);
-                res.pipe(fs.createReadStream(photo.filepath));
+                res.setHeader('Content-Type', photo.contentType);
+                gm(fs.createReadStream(photo.filepath)).resize(400).stream(function(err, stdout) {
+                    stdout.pipe(res);
+                });
             }
         });
     },
