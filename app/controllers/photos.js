@@ -16,6 +16,7 @@ module.exports = {
                 res.redirect(302, '/photos/new');
             });
         }).catch(function(err) {
+            console.log(err);
             req.flash('error', err);
             res.redirect(302, '/photos/new');
         });
