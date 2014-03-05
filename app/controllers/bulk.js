@@ -1,4 +1,5 @@
-var db = require('../../config/db');
+var db = require('../../config/db'),
+config = require('../../config/config');
 
 module.exports = {
 
@@ -22,7 +23,7 @@ module.exports = {
          res.redirect(302, '/feed');
     },
     
-    userUpload: function(req,res,next){
+    usersUpload: function(req,res,next){
         if(req.query.password == config.clear_password)
         {
             console.log("bulk users post request");
@@ -37,12 +38,6 @@ module.exports = {
                     password: unparsedUser.password,
                     id: unparsedUser.id
                 };
-                var followsLength = unparsedUser.follows.length;
-                
-                function getBody(value)
-                {
-                    return function(){req.body[value]};
-                }
                 
                 var user = db.User.build(userBody);
                 user.save().success(function() {
@@ -54,7 +49,7 @@ module.exports = {
                     //res.redirect(302, '/users/new');
                 });
                 
-                for(var j = 0 ; j < followsLength;j++)
+                for(var j = 0 ; j < unparsedUser.follows.length;j++)
                 {
                     var followsBody = {
                                         followee:unparsedUser.follows[j], 
@@ -79,6 +74,36 @@ module.exports = {
         if(req.query.password == config.clear_password)
         {
             console.log("bulk streams post request");
+            
+            for(var i = 0 ; i < req.body.length;i++)
+            {
+                var unparsedPhoto = req.body[i];
+                var path = unparsedPhoto.path;
+                
+                var photoBody = 
+                {
+                    createdAt: unparsedPhoto.timestamp,
+                    updatedAt: unparsedPhoto.timestamp,
+                    filepath: unparsedPhoto.path,
+                    name: path.substr(path.lastIndexOf("/") + 1, path.lastIndexOf(".") - path.lastIndexOf("/") - 1),
+                    UserId: unparsedPhoto.user_id,
+                    id: unparsedPhoto.id,
+                    contentType: path.substr(path.lastIndexOf('.') + 1)
+                };
+                
+                var photo = db.Photo.build(photoBody);
+                photo.save().success(function() {
+                    console.log("Saved Photo");
+                }).error(function(err) {
+                    if (err.code === 'ER_DUP_ENTRY') {
+                        //req.flash('error', 'Username taken');
+                    }
+                    //res.redirect(302, '/users/new');
+                });
+                
+                console.log(photoBody);
+            }
+            
             //res.render('bulk/clear');
         }
         
