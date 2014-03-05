@@ -69,9 +69,17 @@ module.exports = {
                         }).error(function(error)
                         {
                             console.log("Error saving follow relation: " + error);
+                            throw error;
                         });
-
+                    }).error(function(error)
+                    {
+                        console.log("Error searching users table");
+                        throw error;
                     });
+            }).error(function(error)
+            {
+                console.log("Error searching users table");
+                throw error;
             });
 
         res.redirect(302, '/feed');
@@ -101,9 +109,25 @@ module.exports = {
                             {
                                 //relation deleted
                                 console.log("Relation deleted");
+                            }).error(function(error)
+                            {
+                                console.log("Error destroying follow relation");
+                                throw error;
                             });
+                        }).error(function(error)
+                        {
+                            console.log("Error searching follow relation table");
+                            throw error;
                         });
+                    }).error(function(error)
+                    {
+                        console.log("Error searching users table");
+                        throw error;
                     });
+            }).error(function(error)
+            {   
+                console.log("Error searching users table");
+                throw error;
             });
 
         res.redirect(302, '/feed');

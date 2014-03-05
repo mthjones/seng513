@@ -9,23 +9,30 @@ module.exports = {
             db.User.destroy().success(function()
             {
                 console.log("Deleted Users table.");
+            }).error(function(error)
+            {
+                req.flash('error', 'Error destroying Users Table');
             });
             
             db.Follow_relation.destroy().success(function()
             {
                 console.log("Deleted Follow_relation table.");
+            }).error(function(error)
+            {
+                req.flash('error', 'Error destroying Follows Table');
             });
             
             db.Photo.destroy().success(function()
             {
                 console.log("Deleted Photos table.");
+            }).error(function(error)
+            {
+                req.flash('error', 'Error destroying Photos Table');
             });
             
-            console.log("Clear db here");
-            //res.render('bulk/clear');
-        }
-        
-         res.redirect(302, '/feed');
+            res.render('dbclear');
+        }else
+            res.redirect(302, '/feed');
     },
     
     usersUpload: function(req,res,next){
@@ -47,11 +54,8 @@ module.exports = {
                 var user = db.User.build(userBody);
                 user.save().success(function() {
                     //return res.redirect(302, '/feed');
-                }).error(function(err) {
-                    if (err.code === 'ER_DUP_ENTRY') {
-                        //req.flash('error', 'Username taken');
-                    }
-                    //res.redirect(302, '/users/new');
+                }).error(function(error) {
+                    throw error;
                 });
                 
                 for(var j = 0 ; j < unparsedUser.follows.length;j++)
@@ -67,7 +71,7 @@ module.exports = {
                         //console.log("Saved follow");
                     }).error(function(error)
                     {
-                       //error
+                       throw error;
                     });
                 }   
             }
@@ -79,7 +83,6 @@ module.exports = {
         if(req.query.password == config.clear_password)
         {
             console.log("bulk streams post request");
-            
             for(var i = 0 ; i < req.body.length;i++)
             {
                 var unparsedPhoto = req.body[i];
@@ -95,21 +98,14 @@ module.exports = {
                     id: unparsedPhoto.id,
                     contentType: path.substr(path.lastIndexOf('.') + 1)
                 };
-                
+                //console.log(photoBody);
                 var photo = db.Photo.build(photoBody);
                 photo.save().success(function() {
                     console.log("Saved Photo");
                 }).error(function(err) {
-                    if (err.code === 'ER_DUP_ENTRY') {
-                        //req.flash('error', 'Username taken');
-                    }
-                    //res.redirect(302, '/users/new');
+                    throw error;
                 });
-                
-                console.log(photoBody);
             }
-            
-            //res.render('bulk/clear');
         }
         
         res.redirect(302, '/feed');
