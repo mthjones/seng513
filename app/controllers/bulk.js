@@ -88,6 +88,23 @@ module.exports = {
                 var unparsedPhoto = req.body[i];
                 var path = unparsedPhoto.path;
                 
+                var fileExtension = path.substr(path.lastIndexOf('.') + 1);
+                var content_type;
+                switch(fileExtension)
+                {
+                    case 'png': content_type = 'image/png'; break;
+                    case 'jpg': 
+                    case 'jpeg': content_type = 'image/jpeg'; break;
+                    case 'gif': content_type = 'image/gif'; break;
+                    default: content_type = null; break;
+                }
+                
+                if(!content_type)
+                {
+                    console.log("unacceptable file type");
+                    continue;
+                }
+                
                 var photoBody = 
                 {
                     createdAt: new Date(unparsedPhoto.timestamp),
@@ -96,7 +113,7 @@ module.exports = {
                     name: path.substr(path.lastIndexOf("/") + 1, path.lastIndexOf(".") - path.lastIndexOf("/") - 1),
                     UserId: unparsedPhoto.user_id,
                     id: unparsedPhoto.id,
-                    contentType: path.substr(path.lastIndexOf('.') + 1)
+                    contentType: content_type
                 };
                 //console.log(photoBody);
                 var photo = db.Photo.build(photoBody);
