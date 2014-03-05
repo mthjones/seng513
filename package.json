@@ -13,6 +13,7 @@
     "connect-ensure-login": "~0.1.1",
     "jade": "~1.1.5",
     "bluebird": "~1.0.8",
-    "uuid": "~1.4.1"
+    "uuid": "~1.4.1",
+    "gm": "^1.14.2"
   }
 }
