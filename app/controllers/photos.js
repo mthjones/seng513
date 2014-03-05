@@ -1,10 +1,34 @@
 var db = require('../../config/db'),
-    uploader = require('../../lib/image_uploader');
+    uploader = require('../../lib/image_uploader'),
+    fs = require('fs');
 
 module.exports = {
     newForm: function(req, res, next) {
         res.locals = { error: req.flash('error') };
         res.render('photos/new');
+    },
+
+    view: function(req, res, next) {
+        db.Photo.find(req.params.id).then(function(photo) {
+            if (photo === null) {
+                res.status(404).render('404');
+            } else {
+                res.status(200);
+                res.setHeader('Content-Type', photo.contentType);
+                fs.createReadStream(photo.filepath).pipe(res);
+            }
+        });
+    },
+
+    thumbnail: function(req, res, next) {
+        db.Photo.find(req.params.id).then(function(photo) {
+            if (photo === null) {
+                res.status(404).render('404');
+            } else {
+                res.status(200);
+                res.pipe(fs.createReadStream(photo.filepath));
+            }
+        });
     },
 
     create: function(req, res, next) {
