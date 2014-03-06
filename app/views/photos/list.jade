@@ -1,8 +1,7 @@
 extends ../layout
 
 block append content
-  each photoRow in photoRows
-    .row
-      each photo in photoRow
-        include partials/photo
+  each photo in photos
+    .col-md-3
+      img(src="/photos/thumbnail/" + photo.id + ".png")
 
