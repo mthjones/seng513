@@ -5,7 +5,7 @@ module.exports = {
     show: function(req, res, next) {
         var page = req.query.page ? parseInt(req.query.page) : 1;
         req.user.getFeed().then(function(feed) {
-            feed.getPhotoes({offset: page * 30, limit: 30}).then(function(photos) {
+            feed.getPhotoes({offset: (page - 1) * 30, limit: 30}).then(function(photos) {
                 if (photos.length === 0) {
                     res.render('photos/list', {photos: photos, nextPage: page + 1});
                     return;
