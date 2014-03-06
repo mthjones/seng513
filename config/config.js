@@ -15,7 +15,18 @@ var config = {
         },
         clear_password: 1234,
         setup: function(db, app) {
-            return db.User.build({name: 'test', username: 'test', password: 'test'}).save();
+
+            return db.User.create({name: 'test', username: 'test', password: 'test'}).success(function(user){
+                db.Photo.create({filepath: '/Users/B-Rett/Code/Images/cat.jpg', name: 'cat', contentType: 'image/jpeg'}).success(function(photo){
+                    user.addPhoto(photo)
+                })
+            })
+
+
+
+
+            v.save()
+           // return db.Photoes.build({filepath: '/Users/B-Rett/Code/Images/cat.jpg', name: 'cat', contentType: 'image/jpeg'}).save();
         }
     },
     production: {

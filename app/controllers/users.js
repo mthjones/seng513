@@ -28,7 +28,19 @@ module.exports = {
     view: function(req, res, next) {
         db.User.find(req.params.id).then(function(user) {
             if (user) {
-                res.locals = {user: user};
+                res.locals = {user: user}
+                //db.Photo.find({where: req.params.})
+                user.getPhotoes().success(function(photos){
+                   console.log(photos)
+                   res.locals = {photos: photos}
+                   // res.locals = {
+                     //   photos: [[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]]]
+                    //
+                    // };
+                })
+
+
+
                 res.render('users/view');
             } else {
                 res.status(404).render('404');
