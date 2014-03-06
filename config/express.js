@@ -12,8 +12,6 @@ module.exports = function(app) {
         app.set('view engine', 'jade');
         app.enable('view cache');
 
-        // Do we need this? It's deprecated and enabling it causes image uploading to fail
-//        app.use(express.bodyParser());
         app.use(express.compress());
         app.use(express.static(path.join(config.root, 'public')));
         app.use(express.cookieParser());
