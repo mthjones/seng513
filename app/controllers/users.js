@@ -29,10 +29,12 @@ module.exports = {
         db.User.find(req.params.id).then(function(user) {
             if (user) {
                 res.locals = {user: user}
-                //db.Photo.find({where: req.params.})
+
                 user.getPhotoes().success(function(photos){
-                   console.log(photos)
-                   res.locals = {photos: photos}
+                   console.log(photos[0].id)
+                   //res.locals = {photo: photos[0]}
+                   res.render('users/view', {photo: photos[0]});
+
                    // res.locals = {
                      //   photos: [[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]]]
                     //
@@ -41,7 +43,7 @@ module.exports = {
 
 
 
-                res.render('users/view');
+                //res.render('users/view');
             } else {
                 res.status(404).render('404');
             }
