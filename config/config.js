@@ -17,10 +17,15 @@ var config = {
         setup: function(db, app) {
 
             return db.User.create({name: 'test', username: 'test', password: 'test'}).success(function(user){
-                db.Photo.create({filepath: '/Users/B-Rett/Code/Images/cat.jpg', name: 'cat', contentType: 'image/jpeg'}).success(function(photo){
-                    user.addPhoto(photo)
-                })
-            })
+                db.Feed.create().then(function(feed) {
+                    user.setFeed(feed).then(function() {
+                        db.Photo.create({filepath: '/Users/B-Rett/Code/Images/cat.jpg', name: 'cat', contentType: 'image/jpeg'}).success(function(photo){
+                            feed.addPhoto(photo);
+                            user.addPhoto(photo);
+                        });
+                    });
+                });
+            });
 
 
 
