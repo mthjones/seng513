@@ -10,7 +10,6 @@
     "passport": "~0.2.0",
     "passport-local": "~0.1.6",
     "connect-flash": "~0.1.1",
-    "connect-ensure-login": "~0.1.1",
     "jade": "~1.1.5",
     "bluebird": "~1.0.8",
     "uuid": "~1.4.1",
