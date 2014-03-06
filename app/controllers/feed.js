@@ -3,15 +3,15 @@ var db = require('../../config/db'),
 
 module.exports = {
     show: function(req, res, next) {
-        var nextPage = req.query.page ? parseInt(req.query.page) + 1 : 1;
+        var page = req.query.page ? parseInt(req.query.page) : 1;
         req.user.getFeed().then(function(feed) {
-            feed.getPhotoes().then(function(photos) {
+            feed.getPhotoes({offset: page * 30, limit: 30}).then(function(photos) {
                 if (photos.length === 0) {
-                    res.render('photos/list', {photos: photos, nextPage: nextPage});
+                    res.render('photos/list', {photos: photos, nextPage: page + 1});
                     return;
                 }
                 var respond = _.after(photos.length, function(photos, users) {
-                    res.render('photos/list', {photos: photos, users: users, nextPage: nextPage});
+                    res.render('photos/list', {photos: photos, users: users, nextPage: page + 1});
                 });
                 var users = {};
                 photos.forEach(function(photo) {
