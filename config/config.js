@@ -18,12 +18,7 @@ var config = {
 
             return db.User.create({name: 'test', username: 'test', password: 'test'}).success(function(user){
                 db.Feed.create().then(function(feed) {
-                    user.setFeed(feed).then(function() {
-                        db.Photo.create({filepath: '/Users/B-Rett/Code/Images/cat.jpg', name: 'cat', contentType: 'image/jpeg'}).success(function(photo){
-                            feed.addPhoto(photo);
-                            user.addPhoto(photo);
-                        });
-                    });
+                    user.setFeed(feed);
                 });
             });
 
