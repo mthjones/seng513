@@ -28,8 +28,11 @@ module.exports = {
             } else {
                 res.status(200);
                 res.setHeader('Content-Type', photo.contentType);
-                gm(fs.createReadStream(photo.filepath)).resize(400).stream(function(err, stdout) {
-                    stdout.pipe(res);
+                gm(fs.createReadStream(photo.filepath)).size({bufferStream: true}, function(err, size) {
+                    var aspect = size.width / size.height;
+                    this.resize(400, Math.round(400 / aspect)).stream(function(err, stdout) {
+                        stdout.pipe(res);
+                    });
                 });
             }
         });

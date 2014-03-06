@@ -4,4 +4,5 @@ block append content
   | #{user.username}
   | #{user.name}
 
-
+block append content
+    img(src= 'http://127.0.0.1:9000/photos/thumbnail/' + photo.id + '.jpg')
