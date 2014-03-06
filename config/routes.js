@@ -8,7 +8,7 @@ var db = require('./db'),
 
 var ensureAuthed = function(req, res, next) {
     if (!req.isAuthenticated()) res.redirect(302, '/sessions/new');
-    next();
+    else next();
 };
     
 module.exports = function(app) {
