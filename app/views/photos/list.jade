@@ -4,6 +4,7 @@ block append content
   each photo in photos
     .col-md-3
       img(src="/photos/thumbnail/" + photo.id + ".png")
+      | #{users[photo.id].name}
 
   a(href="/feed?page=" + nextPage) more
 
