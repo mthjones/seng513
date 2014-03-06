@@ -44,6 +44,10 @@ module.exports = {
             db.Photo.create({filepath: file.filepath, name: file.filename, contentType: file.contentType}).then(function(photo) {
                 req.user.addPhoto(photo).then(function() {
                     req.user.getFollower().then(function(followers) {
+                        if (followers.length === 0) {
+                            res.redirect(302, '/feed');
+                            return;
+                        }
                         var respond = _.after(followers.length, function() {
                             res.redirect(302, '/feed');
                         });
