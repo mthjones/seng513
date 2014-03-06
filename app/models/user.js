@@ -16,6 +16,7 @@ module.exports = function(sequelize, DataTypes) {
     }, {
         classMethods: {
             associate: function(models) {
+                User.hasOne(models.Feed);
                 User.hasMany(models.Photo);
                 User.hasMany(User, {as: 'Followee', through: 'Following'});
             }
