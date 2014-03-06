@@ -14,14 +14,6 @@ module.exports = {
                 req.flash('error', 'Error destroying Users Table');
             });
             
-            db.Follow_relation.destroy().success(function()
-            {
-                console.log("Deleted Follow_relation table.");
-            }).error(function(error)
-            {
-                req.flash('error', 'Error destroying Follows Table');
-            });
-            
             db.Photo.destroy().success(function()
             {
                 console.log("Deleted Photos table.");
