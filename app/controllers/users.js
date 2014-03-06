@@ -9,12 +9,16 @@ module.exports = {
     create: function(req, res, next) {
         var user = db.User.build(req.body);
         user.save()
-            .success(function() {
-                req.login(user, function(err) {
-                    if (err) {
-                        return next(err);
-                    }
-                    return res.redirect(302, '/feed');
+            .success(function(user) {
+                db.Feed.create().then(function(feed) {
+                    user.setFeed(feed).then(function() {
+                        req.login(user, function(err) {
+                            if (err) {
+                                return next(err);
+                            }
+                            return res.redirect(302, '/feed');
+                        });
+                    });
                 });
             })
             .error(function(err) {
