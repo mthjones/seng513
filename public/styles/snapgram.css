@@ -1,16 +1,10 @@
-@media (min-width: 768px) {
-    body {
-        margin-top: 70px;
-    }
+body {
+    margin-top: 70px;
 }
 
 @media (max-width: 767px) {
-    body {
-        margin-top: 50px;
-    }
-
-    .alert {
-        margin-top: 20px;
+    .photos-container .row:first-of-type {
+        margin-top: -20px !important;
     }
 }
 
