@@ -9,7 +9,7 @@ module.exports = {
         };
 
         req.user.getFeed().then(function(feed) {
-            feed.getPhotoes({offset: (page - 1) * 30, limit: 30}).then(function(photos) {
+            feed.getPhotoes({offset: (page - 1) * 30, limit: 30, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
                 var respond = _.after(photos.length, render);
 
                 if (photos.length === 0) {
