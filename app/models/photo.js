@@ -1,3 +1,4 @@
+var moment = require('moment');
 module.exports = function(sequelize, DataTypes) {
     var Photo = sequelize.define('Photo', {
         filepath: DataTypes.STRING,
@@ -11,7 +12,17 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 Photo.belongsTo(models.User);
             }
+
+        },
+
+        instanceMethods: {
+            timeAgo: function(){
+               return moment(this.createdAt).fromNow()
+
+            }
         }
+
+
     });
 
     return Photo;

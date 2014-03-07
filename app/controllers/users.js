@@ -1,5 +1,6 @@
 var db = require('../../config/db');
 
+
 module.exports = {
     newForm: function(req, res, next) {
         res.locals = { error: req.flash('error') };
@@ -28,22 +29,30 @@ module.exports = {
     view: function(req, res, next) {
         db.User.find(req.params.id).then(function(user) {
             if (user) {
-                res.locals = {user: user}
+
 
                 user.getPhotoes().success(function(photos){
-                   console.log(photos[0].id)
-                   //res.locals = {photo: photos[0]}
-                   res.render('users/view', {photo: photos[0]});
 
-                   // res.locals = {
-                     //   photos: [[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]],[[],[],[],[],[]]]
-                    //
-                    // };
+
+
+                   //var photoArray =
+                   //photos.map(moment(photos.createdAt).fromNow())
+                  // var time_ago = photos[1].createdAt
+                   //console.log(photos[1].createdAt)
+
+                   //time_ago = moment(time_ago).fromNow()
+                   //console.log(time_ago)
+
+
+                   res.locals = {user: user, photos: photos}
+
+                   res.render('users/view');
+
                 })
 
 
 
-                //res.render('users/view');
+
             } else {
                 res.status(404).render('404');
             }

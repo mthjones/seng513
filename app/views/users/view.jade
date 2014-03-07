@@ -1,8 +1,10 @@
 extends ../layout
 
 block append content
-  | #{user.username}
-  | #{user.name}
-
-block append content
-    img(src= 'http://127.0.0.1:9000/photos/thumbnail/' + photo.id + '.jpg')
+    each photo in photos
+        img(src= 'http://127.0.0.1:9000/photos/thumbnail/' + photo.id + '.jpg')
+        p
+            |Uploaded by&nbsp;
+            a(href="/users/#{user.id}", title:#{user.username}) #{user.username}
+            |&nbsp; #{photo.timeAgo()}
+     //a(href="/users/#{user.id}", title:#{user.username}) #{user.username}  #{photo.timeAgo()}

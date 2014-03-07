@@ -1,6 +1,7 @@
 var path = require('path');
 var env = process.env.NODE_ENV || "development";
 
+
 var config = {
     development: {
         envname: "development",
@@ -20,13 +21,15 @@ var config = {
                 db.Photo.create({filepath: '/Users/B-Rett/Code/Images/cat.jpg', name: 'cat', contentType: 'image/jpeg'}).success(function(photo){
                     user.addPhoto(photo)
                 })
+
+                db.Photo.create({filepath: '/Users/B-Rett/Code/Images/eel.jpg', name: 'eel', contentType: 'image/jpeg', createdAt: '2014-03-04 21:49:21'}).success(function(photo){
+                    user.addPhoto(photo)
+                })
             })
 
 
-
-
             v.save()
-           // return db.Photoes.build({filepath: '/Users/B-Rett/Code/Images/cat.jpg', name: 'cat', contentType: 'image/jpeg'}).save();
+
         }
     },
     production: {
@@ -34,5 +37,7 @@ var config = {
         // Fill this in with the server information
     }
 };
+
+
 
 module.exports = config[env];
