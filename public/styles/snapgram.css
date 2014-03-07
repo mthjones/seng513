@@ -1,3 +1,44 @@
-body {
-    margin-top: 60px;
+@media (min-width: 768px) {
+    body {
+        margin-top: 70px;
+    }
+}
+
+@media (max-width: 767px) {
+    body {
+        margin-top: 50px;
+    }
+
+    .alert {
+        margin-top: 20px;
+    }
+}
+
+.separator {
+    text-align: center;
+    margin-bottom: -20px;
+}
+
+.separator span {
+    position: relative;
+    top: -32px;
+    color: #666;
+    padding: 0 10px;
+    background-color: white;
+}
+
+.row figure {
+    width: 400px;
+    text-align: center;
+    margin: 0 auto 3px;
+}
+
+.row figcaption {
+    border: 1px solid #aaa;
+    box-shadow: 0 1px 2px 1px #e6e6e6 inset;
+    background-color: #eee;
+    text-align: left;
+    padding: 5px;
+    font-size: 0.9em;
+    color: #666;
 }

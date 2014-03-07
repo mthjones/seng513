@@ -1,12 +1,19 @@
 extends ../layout
 
-block append content
-  each photo in photos
-    .col-md-3
-      figure
-        img(src="/photos/thumbnail/" + photo.id + ".png")
-        figcaption
-          a(href="/users/" + photo.user.id) #{photo.user.name}
+block append nav-links
+  li.active: a(href="/feed") Feed
+  li: a(href="/photos/new") Upload
 
-  a(href="/feed?page=" + nextPage) more
+block append nav-right-links
+  li: a(href="/logout") Logout
+
+block append content
+  .container-fluid
+    if photos.length === 0
+      .alert.alert-info
+        strong No images to show!
+    each photo in photos
+      .row
+        include partials/photo
+    a.btn.btn-default.btn-lg.btn-block(href="/feed?page=" + nextPage) more
 
