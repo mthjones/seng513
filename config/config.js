@@ -18,6 +18,7 @@ var config = {
         setup: function(db, app) {
 
             return db.User.create({name: 'test', username: 'test', password: 'test'}).success(function(user){
+
                 db.Photo.create({filepath: '/Users/B-Rett/Code/Images/cat.jpg', name: 'cat', contentType: 'image/jpeg'}).success(function(photo){
                     user.addPhoto(photo)
                 })
@@ -25,7 +26,16 @@ var config = {
                 db.Photo.create({filepath: '/Users/B-Rett/Code/Images/eel.jpg', name: 'eel', contentType: 'image/jpeg', createdAt: '2014-03-04 21:49:21'}).success(function(photo){
                     user.addPhoto(photo)
                 })
-            })
+
+                db.Feed.create().then(function(feed) {
+                    user.setFeed(feed);
+                });
+            });
+
+
+
+
+            
 
 
             v.save()
