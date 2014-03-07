@@ -7,7 +7,7 @@ body {
         margin-top: -20px !important;
     }
 
-    .follow-button {
+    .stream-button {
         margin-bottom: 0 !important;
     }
 }
@@ -45,7 +45,7 @@ figure img {
     color: #666;
 }
 
-.follow-button {
+.stream-button {
     max-width: 400px;
     width: 100%;
     border-radius: 0;

@@ -12,13 +12,14 @@ block append content
     if showFollow
       .row
         if following
-          a.btn.btn-block.btn-danger.follow-button(href="/users/" + user.id + "/unfollow") Unfollow
+          a.btn.btn-block.btn-danger.stream-button(href="/users/" + user.id + "/unfollow") Unfollow
         else
-          a.btn.btn-block.btn-success.follow-button(href="/users/" + user.id + "/follow") Follow
+          a.btn.btn-block.btn-success.stream-button(href="/users/" + user.id + "/follow") Follow
     each photo in photos
       .row
         include ../partials/photo
 
     if showMore
-      a.btn.btn-default.btn-lg.btn-block(href="/users/" + user.id + "?page=" + nextPage) more
+      .row
+        a.btn.btn-default.btn-block.stream-button(href="/users/" + user.id + "?page=" + nextPage) more
 
