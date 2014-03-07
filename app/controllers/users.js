@@ -39,7 +39,7 @@ module.exports = {
 
         db.User.find(req.params.id).then(function(user) {
             if (user) {
-                user.getPhotoes({offset: (page - 1) * 30, limit: 30}).then(function(photos) {
+                user.getPhotoes({offset: (page - 1) * 30, limit: 30, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
                     var respond = _.after(photos.length, render);
 
                     if (photos.length === 0) {
