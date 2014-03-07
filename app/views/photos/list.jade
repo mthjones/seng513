@@ -1,5 +1,9 @@
 extends ../layout
 
+block append nav-links
+  li.active: a(href="/feed") Feed
+  li: a(href="/photos/new") Upload
+
 block append content
   .container-fluid
     each photo in photos
