@@ -6,5 +6,6 @@ figure
       = " "
       a(href="/users/" + photo.user.id) #{photo.user.name}
     span.pull-right
-      span.glyphicon.glyphicon-calendar #{''}
-      |  2 minutes ago
+      span.glyphicon.glyphicon-calendar
+      = " "
+      | #{photo.timeAgo()}
