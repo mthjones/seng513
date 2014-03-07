@@ -12,9 +12,9 @@ block append content
     if showFollow
       .row
         if following
-          a.btn.btn-lg.btn-danger(href="/users/" + user.id + "/unfollow") Unfollow
+          a.btn.btn-block.btn-danger.follow-button(href="/users/" + user.id + "/unfollow") Unfollow
         else
-          a.btn.btn-lg.btn-success(href="/users/" + user.id + "/follow") Follow
+          a.btn.btn-block.btn-success.follow-button(href="/users/" + user.id + "/follow") Follow
     each photo in photos
       .row
         include ../partials/photo
