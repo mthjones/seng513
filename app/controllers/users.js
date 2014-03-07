@@ -34,12 +34,37 @@ module.exports = {
     view: function(req, res, next) {
         var page = req.query.page ? parseInt(req.query.page) : 1;
         var render = function (user, photos, isFollowing) {
-            res.render('users/view', {user: user, photos: photos, nextPage: page + 1, following: isFollowing});
+            var showFollow = !!req.user && req.user.id.toString() !== req.params.id;
+            res.render('users/view', {user: user, photos: photos, nextPage: page + 1, following: isFollowing, showFollow: showFollow });
         };
 
-        db.User.find(req.params.id).then(function(user) {
-            if (user !== null) {
-                user.hasFollower(req.user).then(function(isFollowing) {
+        if (req.user) {
+            db.User.find(req.params.id).then(function(user) {
+                if (user !== null) {
+                    user.hasFollower(req.user).then(function(isFollowing) {
+                        user.getPhotoes({offset: (page - 1) * 30, limit: 30, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
+                            var respond = _.after(photos.length, render);
+
+                            if (photos.length === 0) {
+                                render([]);
+                                return;
+                            }
+
+                            photos.forEach(function(photo) {
+                                photo.getUser().then(function(user) {
+                                    photo.user = user;
+                                    respond(user, photos, isFollowing);
+                                });
+                            });
+                        });
+                    });
+                } else {
+                    res.status(404).render('404');
+                }
+            });
+        } else {
+            db.User.find(req.params.id).then(function(user) {
+                if (user !== null) {
                     user.getPhotoes({offset: (page - 1) * 30, limit: 30, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
                         var respond = _.after(photos.length, render);
 
@@ -51,15 +76,15 @@ module.exports = {
                         photos.forEach(function(photo) {
                             photo.getUser().then(function(user) {
                                 photo.user = user;
-                                respond(user, photos, isFollowing);
+                                respond(user, photos);
                             });
                         });
                     });
-                });
-            } else {
-                res.status(404).render('404');
-            }
-        });
+                } else {
+                    res.status(404).render('404');
+                }
+            });
+        }
     },
 
 

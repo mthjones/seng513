@@ -8,11 +8,13 @@ block append nav-right-links
   li: a(href="/logout") Logout
 
 block append content
-  if following
-    a.btn.btn-lg.btn-danger(href="/users/" + user.id + "/unfollow") Unfollow
-  else
-    a.btn.btn-lg.btn-success(href="/users/" + user.id + "/follow") Follow
   .photos-container.container-fluid
+    if showFollow
+      .row
+        if following
+          a.btn.btn-lg.btn-danger(href="/users/" + user.id + "/unfollow") Unfollow
+        else
+          a.btn.btn-lg.btn-success(href="/users/" + user.id + "/follow") Follow
     each photo in photos
       .row
         include ../partials/photo
