@@ -2,9 +2,16 @@ extends ../layout
 
 block append content
     each photo in photos
-        img(src= 'http://127.0.0.1:9000/photos/thumbnail/' + photo.id + '.jpg')
-        p
-            |Uploaded by&nbsp;
-            a(href="/users/#{user.id}", title:#{user.username}) #{user.username}
-            |&nbsp; #{photo.timeAgo()}
-     //a(href="/users/#{user.id}", title:#{user.username}) #{user.username}  #{photo.timeAgo()}
+        .col-md-3
+            figure
+                img(src="/photos/thumbnail/" + photo.id + ".jpg")
+                figcaption
+                    |Uploaded by&nbsp;
+                    a(href="/users/" + photo.user.id) #{photo.user.name}
+                    |&nbsp; #{photo.timeAgo()}
+
+    a(href="/feed?page=" + nextPage) more
+
+
+
+

@@ -1,4 +1,5 @@
 var db = require('../../config/db');
+    _ =  require('lodash');
 
 
 module.exports = {
@@ -31,37 +32,34 @@ module.exports = {
     },
 
     view: function(req, res, next) {
+        var page = req.query.page ? parseInt(req.query.page) : 1;
+        var render = function (photos) {
+            res.render('users/view', {photos: photos, nextPage: page + 1});
+        };
+
         db.User.find(req.params.id).then(function(user) {
             if (user) {
+                user.getPhotoes({offset: (page - 1) * 30, limit: 30}).then(function(photos) {
+                    var respond = _.after(photos.length, render);
 
+                    if (photos.length === 0) {
+                        render([]);
+                        return;
+                     }
 
-                user.getPhotoes().success(function(photos){
-
-
-
-                   //var photoArray =
-                   //photos.map(moment(photos.createdAt).fromNow())
-                  // var time_ago = photos[1].createdAt
-                   //console.log(photos[1].createdAt)
-
-                   //time_ago = moment(time_ago).fromNow()
-                   //console.log(time_ago)
-
-
-                   res.locals = {user: user, photos: photos}
-
-                   res.render('users/view');
-
-                })
-
-
-
-
-            } else {
+                    photos.forEach(function(photo) {
+                        photo.getUser().then(function(user) {
+                            photo.user = user;
+                            respond(photos);
+                         });
+                    });
+                 });
+            }else {
                 res.status(404).render('404');
             }
         });
     },
+
 
     follow: function(req, res, next) {
         db.User.find(req.params.id).then(function(followee) {
