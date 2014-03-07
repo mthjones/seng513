@@ -1,5 +1,9 @@
 extends ../layout
 
+block append nav-links
+  li.active: a(href="/sessions/new") Login
+  li: a(href="/users/new") Register
+
 block append content
   .container
     .row
