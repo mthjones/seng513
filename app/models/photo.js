@@ -1,11 +1,14 @@
 var moment = require('moment');
+
 module.exports = function(sequelize, DataTypes) {
     var Photo = sequelize.define('Photo', {
         filepath: DataTypes.STRING,
         name: DataTypes.STRING,
         contentType: DataTypes.STRING,
-        createdAt: {type: DataTypes.DATE,
-                   defaultValue: new Date()}
+        createdAt: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.NOW
+        }
     }, {
         timestamps: false,
         classMethods: {

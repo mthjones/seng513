@@ -18,7 +18,7 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 User.hasOne(models.Feed);
                 User.hasMany(models.Photo);
-                User.hasMany(User, {as: 'Follower', through: 'Following'});
+                User.hasMany(User, {as: 'Follower', through: 'UserFollowers'});
             }
         },
         instanceMethods: {

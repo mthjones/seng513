@@ -1,0 +1,11 @@
+figure
+  img(src="/photos/thumbnail/" + photo.id + ".png")
+  figcaption
+    span
+      span.glyphicon.glyphicon-user
+      = " "
+      a(href="/users/" + photo.user.id) #{photo.user.name}
+    span.pull-right
+      span.glyphicon.glyphicon-calendar
+      = " "
+      | #{photo.timeAgo()}

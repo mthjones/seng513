@@ -6,6 +6,22 @@ html
     link(rel="stylesheet", href="/components/bootstrap/dist/css/bootstrap.min.css")
     link(rel="stylesheet", href="/styles/snapgram.css")
   body
+    block topbar
+      nav.navbar.navbar-inverse.navbar-fixed-top
+        .container-fluid
+          .navbar-header
+            button.navbar-toggle(type="button", data-toggle="collapse", data-target="#snapgram-nav-collapse")
+              span.sr-only Toggle navigation
+              span.icon-bar
+              span.icon-bar
+              span.icon-bar
+            a.navbar-brand(href="/") SnapGram
+          #snapgram-nav-collapse.collapse.navbar-collapse
+            ul.nav.navbar-nav
+              block nav-links
+            ul.nav.navbar-nav.navbar-right
+              block nav-right-links
+
     block content
     script(src="/components/jquery/dist/jquery.min.js")
     script(src="/components/bootstrap/dist/js/bootstrap.min.js")
