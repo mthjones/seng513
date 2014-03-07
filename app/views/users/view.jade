@@ -1,7 +1,15 @@
 extends ../layout
 
+block append nav-links
+  li: a(href="/feed") Feed
+  li: a(href="/photos/new") Upload
+
+block append nav-right-links
+  li: a(href="/logout") Logout
+
 block append content
     each photo in photos
+
         .col-md-3
             figure
                 img(src="/photos/thumbnail/" + photo.id + ".jpg")
@@ -11,7 +19,4 @@ block append content
                     |&nbsp; #{photo.timeAgo()}
 
     a(href="/feed?page=" + nextPage) more
-
-
-
 
