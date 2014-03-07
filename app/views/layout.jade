@@ -6,6 +6,11 @@ html
     link(rel="stylesheet", href="/components/bootstrap/dist/css/bootstrap.min.css")
     link(rel="stylesheet", href="/styles/snapgram.css")
   body
+    block topbar
+      nav.navbar.navbar-inverse.navbar-fixed-top
+        .container-fluid
+          .navbar-header
+            a.navbar-brand(href="/") SnapGram
     block content
     script(src="/components/jquery/dist/jquery.min.js")
     script(src="/components/bootstrap/dist/js/bootstrap.min.js")
