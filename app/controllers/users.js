@@ -36,7 +36,7 @@ module.exports = {
         var page = req.query.page ? parseInt(req.query.page) : 1;
         var render = function (user, photos, isFollowing, showMore) {
             var showFollow = !!req.user && req.user.id.toString() !== req.params.id;
-            res.render('users/view', {user: user, photos: photos, nextPage: page + 1, following: isFollowing, showFollow: showFollow, showMore: showMore });
+            res.render('users/view', {user: user, photos: photos, nextPage: page + 1, following: isFollowing, showFollow: showFollow, showMore: showMore, loggedIn: !!req.user });
         };
 
         if (req.user) {

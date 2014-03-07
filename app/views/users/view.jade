@@ -1,11 +1,16 @@
 extends ../layout
 
 block append nav-links
-  li: a(href="/feed") Feed
-  li: a(href="/photos/new") Upload
+  if loggedIn
+    li: a(href="/feed") Feed
+    li: a(href="/photos/new") Upload
+  else
+    li.active: a(href="/sessions/new") Login
+    li: a(href="/users/new") Register
 
 block append nav-right-links
-  li: a(href="/logout") Logout
+  if loggedIn
+    li: a(href="/logout") Logout
 
 block append content
   .photos-container.container-fluid
