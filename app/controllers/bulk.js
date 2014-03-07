@@ -1,6 +1,17 @@
 var db = require('../../config/db'),
     config = require('../../config/config'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    path = require('path');
+
+var contentTypeForPath = function(filepath) {
+    var fileExtension = path.extname(filepath);
+
+    if (fileExtension === 'png') return 'image/png';
+    if (/jpe?g/.test(fileExtension)) return 'image/jpeg';
+    if (fileExtension === 'gif') return 'image/gif';
+
+    return null;
+};
 
 module.exports = {
     clear: function (req, res, next) {
@@ -58,79 +69,41 @@ module.exports = {
 
     streamsUpload: function (req, res, next) {
         if (req.query.password === config.clear_password) {
-            var addBulkPhoto = function (photoObject) {
-                db.Photo.create(photoObject).then(function (photo) {
-                    db.User.find({where: {id: photoObject.UserId}}).success(function (user) {
-                        if (user == null) {
-                            console.log("user is null id: " + photoObject.UserId);
-                        } else
-                            user.addPhoto(photo).then(function () {
-                                user.getFeed().then(function (feed) {
-                                    feed.addPhoto(photo);
-                                });
+            var photos = req.body;
 
-                                user.getFollower().then(function (followers) {
-                                    if (followers.length === 0) {
-                                        res.status(200).send('');
-                                        return;
-                                    }
-                                    var respond = _.after(followers.length, function () {
-                                        //multiple asynch calls, best way to call this once a bunch of a synch calls are done? In this case: after
-                                        //all photos have been uploaded, created, and propagated through the system.
-                                        res.status(200).send();
-                                    });
-                                    followers.forEach(function (follower) {
-                                        follower.getFeed().then(function (feed) {
-                                            feed.addPhoto(photo);
-                                            respond();
-                                        });
-                                    });
-                                });
-                            });
-                    });
-                }).catch(function (err) {
-                    res.status(500).send('Internal server error');
-                });
-            };
+            var sendResponse = _.after(photos.length, function() {
+                res.status(200).send('Streams added');
+            });
 
-            for (var i = 0; i < req.body.length; i++) {
-                var unparsedPhoto = req.body[i];
-                var path = unparsedPhoto.path;
-
-                var fileExtension = path.substr(path.lastIndexOf('.') + 1);
-                var content_type;
-                switch (fileExtension) {
-                    case 'png':
-                        content_type = 'image/png';
-                        break;
-                    case 'jpg':
-                    case 'jpeg':
-                        content_type = 'image/jpeg';
-                        break;
-                    case 'gif':
-                        content_type = 'image/gif';
-                        break;
-                    default:
-                        content_type = null;
-                        break;
-                }
-
-                if (!content_type) {
-                    continue;
-                }
-
+            photos.forEach(function(unparsedPhoto) {
                 var photoBody = {
                     createdAt: new Date(unparsedPhoto.timestamp),
                     filepath: unparsedPhoto.path,
-                    name: path.substr(path.lastIndexOf("/") + 1, path.lastIndexOf(".") - path.lastIndexOf("/") - 1),
-                    UserId: unparsedPhoto.user_id,
+                    name: path.basename(unparsedPhoto.path),
                     id: unparsedPhoto.id,
-                    contentType: content_type,
-                    ext: fileExtension
+                    contentType: contentTypeForPath(unparsedPhoto.path),
+                    ext: path.extname(unparsedPhoto.path)
                 };
 
-                addBulkPhoto(photoBody);
-            }
+                db.Photo.create(photoBody).then(function(photo) {
+                    db.User.find(unparsedPhoto.user_id).then(function(user) {
+                        user.addPhoto(photo).then(function() {
+                            user.getFeed().then(function(feed) {
+                                feed.addPhoto(photo);
+                            });
+                            user.getFollower().then(function(followers) {
+                                followers.forEach(function(follower) {
+                                    follower.getFeed().then(function(feed) {
+                                        feed.addPhoto(photo);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }).then(function() {
+                    sendResponse();
+                });
+            });
         } else {
             res.status(401).send('Unauthorized to bulk add photos');
         }
