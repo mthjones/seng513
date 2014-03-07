@@ -43,8 +43,18 @@ var config = {
         }
     },
     production: {
-        envname: "production"
-        // Fill this in with the server information
+        envname: "production",
+        port: 8300,
+        root: path.normalize(path.join(__dirname, '..')),
+        db: {
+            adapter: 'mysql',
+            name: 'DATABASE_NAME_GOES_HERE',
+            host: 'web2.cpsc.ucalgary.ca',
+            port: 3306,
+            username: 'DATABASE_USER_GOES_HERE',
+            password: 'DATABASE_PASSWORD_GOES_HERE'
+        },
+        clear_password: 1234
     }
 };
 
