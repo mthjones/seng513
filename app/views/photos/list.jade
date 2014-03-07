@@ -1,10 +1,9 @@
 extends ../layout
 
 block append content
-
-  a(href="/feed?page=" + nextPage) more
   .container-fluid
     each photo in photos
       .row
         include partials/photo
+    a.btn.btn-default.btn-large.btn-block(href="/feed?page=" + nextPage) more
 
