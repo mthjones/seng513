@@ -24,5 +24,18 @@
 }
 
 .row figure {
+    width: 400px;
+    margin: 0 auto;
     text-align: center;
+}
+
+.row figcaption {
+    border: 1px solid #aaa;
+    border-top: none;
+    box-shadow: 0 1px 2px 1px #e6e6e6 inset;
+    background-color: #eee;
+    text-align: left;
+    padding: 5px;
+    font-size: 0.9em;
+    color: #666;
 }
