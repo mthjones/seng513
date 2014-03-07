@@ -6,7 +6,7 @@ block append content
       figure
         img(src="/photos/thumbnail/" + photo.id + ".png")
         figcaption
-          a(href="/users/" + users[photo.id].id) #{users[photo.id].name}
+          a(href="/users/" + photo.user.id) #{photo.user.name}
 
   a(href="/feed?page=" + nextPage) more
 
