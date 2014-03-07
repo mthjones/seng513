@@ -19,5 +19,6 @@ block append content
       .row
         include ../partials/photo
 
-    a(href="/feed?page=" + nextPage) more
+    if showMore
+      a.btn.btn-default.btn-lg.btn-block(href="/users/" + user.id + "?page=" + nextPage) more
 
