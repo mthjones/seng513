@@ -1,7 +1,8 @@
 var db = require('../../config/db'),
     uploader = require('../../lib/image_uploader'),
     fs = require('fs'),
-    gm = require('gm');
+    gm = require('gm'),
+    _ = require('lodash');
 
 module.exports = {
     newForm: function(req, res, next) {
@@ -40,9 +41,29 @@ module.exports = {
 
     create: function(req, res, next) {
         uploader.upload(req).then(function(file) {
-            db.Photo.create({filepath: file.filepath, name: file.filename, contentType: file.contentType}).then(function() {
-                res.redirect(302, '/feed');
+            db.Photo.create({filepath: file.filepath, name: file.filename, contentType: file.contentType}).then(function(photo) {
+                req.user.addPhoto(photo).then(function() {
+                    req.user.getFeed().then(function(feed) {
+                        feed.addPhoto(photo);
+                    });
+                    req.user.getFollower().then(function(followers) {
+                        if (followers.length === 0) {
+                            res.redirect(302, '/feed');
+                            return;
+                        }
+                        var respond = _.after(followers.length, function() {
+                            res.redirect(302, '/feed');
+                        });
+                        followers.forEach(function(follower) {
+                            follower.getFeed().then(function(feed) {
+                                feed.addPhoto(photo);
+                                respond();
+                            });
+                        });
+                    });
+                });
             }).catch(function(err) {
+                console.log(err);
                 req.flash('error', 'Photo upload error');
                 res.redirect(302, '/photos/new');
             });
