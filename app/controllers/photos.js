@@ -77,7 +77,21 @@ module.exports = {
     share: function(req, res, next) {
         db.Photo.find(req.params.id).then(function(photo) {
             photo.addSharer(req.user).then(function() {
-                res.status(200).send();
+                req.user.getFollower().then(function(followers) {
+                    if (followers.length === 0) {
+                        res.status(200).send();
+                        return;
+                    }
+                    var respond = _.after(followers.length, function() {
+                        res.status(200).send();
+                    });
+                    followers.forEach(function(follower) {
+                        follower.getFeed().then(function(feed) {
+                            feed.addPhoto(photo);
+                            respond();
+                        });
+                    });
+                });
             });
         });
     }
