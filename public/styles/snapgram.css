@@ -1,5 +1,13 @@
-body {
-    margin-top: 70px;
+@media (min-width: 768px) {
+    body {
+        margin-top: 70px;
+    }
+}
+
+@media (max-width: 767px) {
+    body {
+        margin-top: 50px;
+    }
 }
 
 .separator {
