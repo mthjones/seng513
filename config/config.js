@@ -48,11 +48,11 @@ var config = {
         root: path.normalize(path.join(__dirname, '..')),
         db: {
             adapter: 'mysql',
-            name: 'DATABASE_NAME_GOES_HERE',
+            name: process.env.SNAPGRAM_DB,
             host: 'web2.cpsc.ucalgary.ca',
             port: 3306,
-            username: 'DATABASE_USER_GOES_HERE',
-            password: 'DATABASE_PASSWORD_GOES_HERE'
+            username: process.env.SNAPGRAM_USER,
+            password: process.env.SNAPGRAM_PASS
         },
         clear_password: 1234
     }
