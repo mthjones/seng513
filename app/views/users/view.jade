@@ -4,6 +4,9 @@ block append nav-links
   li: a(href="/feed") Feed
   li: a(href="/photos/new") Upload
 
+block append nav-right-links
+  li: a(href="/logout") Logout
+
 block append content
   | #{user.username}
   | #{user.name}
