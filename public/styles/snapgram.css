@@ -24,7 +24,7 @@ body {
 .row figure {
     width: 100%;
     max-width: 400px;
-    margin: 0 auto;
+    margin: 0 auto 3px;
 }
 
 figure img {
