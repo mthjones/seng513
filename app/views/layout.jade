@@ -26,3 +26,10 @@ html
     block content
     script(src="/components/jquery/dist/jquery.min.js")
     script(src="/components/bootstrap/dist/js/bootstrap.min.js")
+    script.
+      $('figure').on('click', '.share', function(event) {
+        var photoId = $(event.target).data('photoid');
+        $.post('/photos/' + photoId + '/share').success(function() {
+          $(event.target).hide();
+        });
+      })
