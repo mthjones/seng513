@@ -9,14 +9,8 @@ block append nav-right-links
 
 block append content
     each photo in photos
-
-        .col-md-3
-            figure
-                img(src="/photos/thumbnail/" + photo.id + ".jpg")
-                figcaption
-                    |Uploaded by&nbsp;
-                    a(href="/users/" + photo.user.id) #{photo.user.name}
-                    |&nbsp; #{photo.timeAgo()}
+      .row
+        include ../partials/photo
 
     a(href="/feed?page=" + nextPage) more
 

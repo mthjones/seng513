@@ -14,7 +14,7 @@ block append content
         strong No images to show!
     each photo in photos
       .row
-        include partials/photo
+        include ../partials/photo
     if showMore
       a.btn.btn-default.btn-lg.btn-block(href="/feed?page=" + nextPage) more
 
