@@ -34,6 +34,7 @@ module.exports = function(app) {
 
     app.get('/photos/new', ensureAuthed, photosCtrl.newForm);
     app.post('/photos/create', ensureAuthed, photosCtrl.create);
+    app.post('/photos/:id/share', ensureAuthed, photosCtrl.share);
     app.get('/photos/thumbnail/:id.:ext', photosCtrl.thumbnail);
     app.get('/photos/:id.:ext', photosCtrl.view);
 };

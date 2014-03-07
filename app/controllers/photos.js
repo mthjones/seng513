@@ -72,5 +72,13 @@ module.exports = {
             req.flash('error', err);
             res.redirect(302, '/photos/new');
         });
+    },
+
+    share: function(req, res, next) {
+        db.Photo.find(req.params.id).then(function(photo) {
+            photo.addSharer(req.user).then(function() {
+                res.status(200).send();
+            });
+        });
     }
 };
