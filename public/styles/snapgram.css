@@ -22,16 +22,20 @@ body {
 }
 
 .row figure {
-    width: 400px;
-    text-align: center;
-    margin: 0 auto 3px;
+    width: 100%;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+figure img {
+    width: 100%;
+    max-width: 400px;
 }
 
 .row figcaption {
     border: 1px solid #aaa;
     box-shadow: 0 1px 2px 1px #e6e6e6 inset;
     background-color: #eee;
-    text-align: left;
     padding: 5px;
     font-size: 0.9em;
     color: #666;
