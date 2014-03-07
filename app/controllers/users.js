@@ -38,8 +38,8 @@ module.exports = {
         };
 
         db.User.find(req.params.id).then(function(user) {
-            user.hasFollower(req.user).then(function(isFollowing) {
-                if (user) {
+            if (user !== null) {
+                user.hasFollower(req.user).then(function(isFollowing) {
                     user.getPhotoes({offset: (page - 1) * 30, limit: 30, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
                         var respond = _.after(photos.length, render);
 
@@ -55,10 +55,10 @@ module.exports = {
                             });
                         });
                     });
-                }else {
-                    res.status(404).render('404');
-                }
-            });
+                });
+            } else {
+                res.status(404).render('404');
+            }
         });
     },
 
