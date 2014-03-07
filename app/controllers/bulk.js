@@ -1,5 +1,7 @@
 var db = require('../../config/db'),
-    config = require('../../config/config');
+    config = require('../../config/config'),
+    _ = require('lodash');
+    
 
 module.exports = {
 
@@ -16,6 +18,28 @@ module.exports = {
             }).error(function (error) {
                 req.flash('error', 'Error destroying Photos Table');
             });
+            
+            db.Feed.destroy().success(function () {
+                console.log("Deleted Feeds table.");
+            }).error(function (error) {
+                req.flash('error', 'Error destroying Feeds Table');
+            });
+            
+            db.sequelize.query("DELETE FROM feedsphotoes WHERE 1=1").success(function()
+            {
+                console.log("Deleted feedsphotoes table.");
+            }).error(function(error)
+            {
+                req.flash('error', 'Error feedsphotoes following Table');
+            });
+            
+            db.sequelize.query("DELETE FROM userFollowers WHERE 1=1").success(function()
+            {
+                console.log("Deleted following table.");
+            }).error(function(error)
+            {
+                req.flash('error', 'Error destroying following Table');
+            });
 
             res.render('dbclear');
         } else
@@ -25,6 +49,28 @@ module.exports = {
     usersUpload: function (req, res, next) {
         if (req.query.password == config.clear_password) {
             console.log("bulk users post request");
+            
+            var respond = _.after(req.body.length, function()
+            {
+                var AddFollower = function(followeeid, followerid)
+                {
+                    //console.log("eeid: " + followeeid + " erid: " + followerid);
+                    db.User.find({where: {id: followerid}}).success(function(follower)
+                    {
+                        db.User.find({where: {id:followeeid}}).success(function(followee)
+                        {
+                            //console.log("ASYNC: eeid: " + followeeid + " erid: " + followerid);
+                            followee.addFollower(follower);
+                        });
+                    });
+                }
+                for (var i = 0; i < req.body.length; i++) {
+                    for (var j = 0; j < req.body[i].follows.length; j++) {
+                        AddFollower(req.body[i].follows[j], req.body[i].id);
+                    }
+                }
+            });
+            
             for (var i = 0; i < req.body.length; i++) {
                 //For each element, create a user, for each user create follows relation:
                 var unparsedUser = req.body[i];
@@ -36,25 +82,16 @@ module.exports = {
                 };
 
                 var user = db.User.build(userBody);
-                user.save().success(function () {
-                    //return res.redirect(302, '/feed');
+                user.save().success(function (user) {
+                    db.Feed.create().then(function(feed)
+                    {
+                        user.setFeed(feed);
+                    });
+                    
+                    respond();
                 }).error(function (error) {
                     throw error;
                 });
-
-                for (var j = 0; j < unparsedUser.follows.length; j++) {
-                    var followsBody = {
-                        followee: unparsedUser.follows[j],
-                        follower: unparsedUser.id
-                    };
-
-                    var f = db.Follow_relation.build(followsBody);
-                    f.save().success(function () {
-                        //console.log("Saved follow");
-                    }).error(function (error) {
-                        throw error;
-                    });
-                }
             }
         }
         res.redirect(302, '/feed');
@@ -63,6 +100,48 @@ module.exports = {
     streamsUpload: function (req, res, next) {
         if (req.query.password == config.clear_password) {
             console.log("bulk streams post request");
+            
+            var addBulkPhoto = function(photoObject)
+            {
+                db.Photo.create(photoObject).then(function(photo) {
+                    
+                    db.User.find({where: {id: photoObject.UserId}}).success(function(user)
+                    {
+                        if(user == null)
+                        {
+                            console.log("user is null id: " + photoObject.UserId);
+                        }else
+                        user.addPhoto(photo).then(function() {
+                            user.getFeed().then(function(feed) {
+                                feed.addPhoto(photo);
+                            });
+                            
+                            user.getFollower().then(function(followers) {
+                                if (followers.length === 0) {
+                                    res.redirect(302, '/feed');
+                                    return;
+                                }
+                                var respond = _.after(followers.length, function() {
+                                    //multiple asynch calls, best way to call this once a bunch of a synch calls are done? In this case: after
+                                    //all photos have been uploaded, created, and propagated through the system.
+                                    res.redirect(302, '/feed');
+                                });
+                                followers.forEach(function(follower) {
+                                    follower.getFeed().then(function(feed) {
+                                        feed.addPhoto(photo);
+                                        respond();
+                                    });
+                                });
+                            });
+                        });
+                    });
+                }).catch(function(err) {
+                    console.log(err);
+                    req.flash('error', 'Photo upload error');
+                    res.redirect(302, '/photos/new');
+                });
+            }
+            
             for (var i = 0; i < req.body.length; i++) {
                 var unparsedPhoto = req.body[i];
                 var path = unparsedPhoto.path;
@@ -98,18 +177,23 @@ module.exports = {
                     name: path.substr(path.lastIndexOf("/") + 1, path.lastIndexOf(".") - path.lastIndexOf("/") - 1),
                     UserId: unparsedPhoto.user_id,
                     id: unparsedPhoto.id,
-                    contentType: content_type
+                    contentType: content_type,
+                    ext: fileExtension
                 };
+                
+                addBulkPhoto(photoBody)
+                
                 //console.log(photoBody);
-                var photo = db.Photo.build(photoBody);
-                photo.save().success(function () {
-                    console.log("Saved Photo");
-                }).error(function (err) {
-                    throw error;
-                });
+                // var photo = db.Photo.build(photoBody);
+                // photo.save().success(function () {
+                    // console.log("Saved Photo");
+
+                // }).error(function (err) {
+                    // throw error;
+                // });
             }
         }
 
-        res.redirect(302, '/feed');
+        //res.redirect(302, '/feed');
     }
 };

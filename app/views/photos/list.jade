@@ -15,5 +15,6 @@ block append content
     each photo in photos
       .row
         include partials/photo
-    a.btn.btn-default.btn-lg.btn-block(href="/feed?page=" + nextPage) more
+    if showMore
+      a.btn.btn-default.btn-lg.btn-block(href="/feed?page=" + nextPage) more
 

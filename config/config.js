@@ -43,8 +43,18 @@ var config = {
         }
     },
     production: {
-        envname: "production"
-        // Fill this in with the server information
+        envname: "production",
+        port: 8300,
+        root: path.normalize(path.join(__dirname, '..')),
+        db: {
+            adapter: 'mysql',
+            name: process.env.SNAPGRAM_DB,
+            host: 'web2.cpsc.ucalgary.ca',
+            port: 3306,
+            username: process.env.SNAPGRAM_USER,
+            password: process.env.SNAPGRAM_PASS
+        },
+        clear_password: 1234
     }
 };
 

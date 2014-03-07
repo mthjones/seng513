@@ -5,6 +5,10 @@ module.exports = function(sequelize, DataTypes) {
         filepath: DataTypes.STRING,
         name: DataTypes.STRING,
         contentType: DataTypes.STRING,
+        ext: {
+            type: DataTypes.STRING,
+            defaultValue: 'jpg'
+        },
         createdAt: {
             type: DataTypes.DATE,
             defaultValue: DataTypes.NOW

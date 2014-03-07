@@ -2,7 +2,8 @@ var db = require('../../config/db'),
     uploader = require('../../lib/image_uploader'),
     fs = require('fs'),
     gm = require('gm'),
-    _ = require('lodash');
+    _ = require('lodash'),
+    path = require('path');
 
 module.exports = {
     newForm: function(req, res, next) {
@@ -41,7 +42,7 @@ module.exports = {
 
     create: function(req, res, next) {
         uploader.upload(req).then(function(file) {
-            db.Photo.create({filepath: file.filepath, name: file.filename, contentType: file.contentType}).then(function(photo) {
+            db.Photo.create({filepath: file.filepath, name: file.filename, contentType: file.contentType, ext: path.extname(file.filename).split('.').pop()}).then(function(photo) {
                 req.user.addPhoto(photo).then(function() {
                     req.user.getFeed().then(function(feed) {
                         feed.addPhoto(photo);
