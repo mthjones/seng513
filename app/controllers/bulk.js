@@ -4,7 +4,7 @@ var db = require('../../config/db'),
 
 module.exports = {
     clear: function (req, res, next) {
-        if (req.query.password == config.clear_password) {
+        if (req.query.password === config.clear_password) {
             db.sequelize.sync({force: true}).then(function() {
                 res.status(200).send('DB cleared');
             }).catch(function(err) {
@@ -16,7 +16,7 @@ module.exports = {
     },
 
     usersUpload: function (req, res, next) {
-        if (req.query.password == config.clear_password) {
+        if (req.query.password === config.clear_password) {
             var users = req.body;
             var totalFollows = _.flatten(_.pluck(users, 'follows')).length;
 
@@ -57,7 +57,7 @@ module.exports = {
     },
 
     streamsUpload: function (req, res, next) {
-        if (req.query.password == config.clear_password) {
+        if (req.query.password === config.clear_password) {
             var addBulkPhoto = function (photoObject) {
                 db.Photo.create(photoObject).then(function (photo) {
                     db.User.find({where: {id: photoObject.UserId}}).success(function (user) {
