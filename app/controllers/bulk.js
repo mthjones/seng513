@@ -5,14 +5,11 @@ var db = require('../../config/db'),
 module.exports = {
     clear: function (req, res, next) {
         if (req.query.password == config.clear_password) {
-            db.User.destroy();
-            db.Photo.destroy();
-            db.Feed.destroy();
-
-            db.sequelize.query("DELETE FROM feedsphotoes WHERE 1=1");
-            db.sequelize.query("DELETE FROM userFollowers WHERE 1=1");
-
-            res.status(200).send('DB cleared');
+            db.sequelize.sync({force: true}).then(function() {
+                res.status(200).send('DB cleared');
+            }).catch(function(err) {
+                res.status(500).send("Couldn't clear DB");
+            });
         } else {
             res.status(401).send("Unauthorized to clear the database");
         }
