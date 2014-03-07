@@ -16,5 +16,6 @@ block append content
       .row
         include ../partials/photo
     if showMore
-      a.btn.btn-default.btn-lg.btn-block(href="/feed?page=" + nextPage) more
+      .row
+        a.btn.btn-default.btn-lg.btn-block.stream-button(href="/feed?page=" + nextPage) more
 

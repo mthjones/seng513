@@ -1,6 +1,7 @@
 var db = require('../../config/db'),
     _ =  require('lodash');
 
+const pageSize = 30;
 
 module.exports = {
     newForm: function(req, res, next) {
@@ -33,33 +34,72 @@ module.exports = {
 
     view: function(req, res, next) {
         var page = req.query.page ? parseInt(req.query.page) : 1;
-        var render = function (user, photos, isFollowing) {
-            res.render('users/view', {user: user, photos: photos, nextPage: page + 1, following: isFollowing});
+        var render = function (user, photos, isFollowing, showMore) {
+            var showFollow = !!req.user && req.user.id.toString() !== req.params.id;
+            res.render('users/view', {user: user, photos: photos, nextPage: page + 1, following: isFollowing, showFollow: showFollow, showMore: showMore, loggedIn: !!req.user });
         };
 
-        db.User.find(req.params.id).then(function(user) {
-            user.hasFollower(req.user).then(function(isFollowing) {
-                if (user) {
-                    user.getPhotoes({offset: (page - 1) * 30, limit: 30, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
-                        var respond = _.after(photos.length, render);
+        if (req.user) {
+            db.User.find(req.params.id).then(function(user) {
+                if (user !== null) {
+                    user.hasFollower(req.user).then(function(isFollowing) {
+                        user.getPhotoes().then(function(allPhotos) {
+                            return allPhotos.length;
+                        }).then(function(count) {
+                            user.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [
+                                ['Photoes.createdAt', 'DESC']
+                            ]}).then(function (photos) {
+                                var respond = _.after(photos.length, render);
 
-                        if (photos.length === 0) {
-                            render([]);
-                            return;
-                        }
+                                if (photos.length === 0) {
+                                    render([]);
+                                    return;
+                                }
 
-                        photos.forEach(function(photo) {
-                            photo.getUser().then(function(user) {
-                                photo.user = user;
-                                respond(user, photos, isFollowing);
+                                photos.forEach(function (photo) {
+                                    photo.getUser().then(function (user) {
+                                        photo.user = user;
+                                        var showMore = (pageSize * (page - 1)) + photos.length < count;
+                                        respond(user, photos, isFollowing, showMore);
+                                    });
+                                });
                             });
                         });
                     });
-                }else {
+                } else {
                     res.status(404).render('404');
                 }
             });
-        });
+        } else {
+            db.User.find(req.params.id).then(function(user) {
+                if (user !== null) {
+                    user.getPhotoes().then(function(allPhotos) {
+                        return allPhotos.length;
+                    }).then(function(count) {
+                        user.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [
+                            ['Photoes.createdAt', 'DESC']
+                        ]}).then(function (photos) {
+                            var respond = _.after(photos.length, render);
+
+                            if (photos.length === 0) {
+                                render([]);
+                                return;
+                            }
+
+                            photos.forEach(function (photo) {
+                                photo.getUser().then(function (user) {
+                                    photo.user = user;
+                                    var showMore = (pageSize * (page - 1)) + photos.length < count;
+                                    respond(user, photos, false, showMore);
+                                });
+                            });
+                        });
+                    });
+                } else {
+                    res.status(404).render('404');
+                }
+            });
+        }
     },
 
 
