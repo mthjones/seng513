@@ -8,6 +8,7 @@ block append nav-right-links
   li: a(href="/logout") Logout
 
 block append content
+  .photos-container.container-fluid
     each photo in photos
       .row
         include ../partials/photo
