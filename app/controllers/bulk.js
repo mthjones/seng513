@@ -18,7 +18,7 @@ module.exports = {
     usersUpload: function (req, res, next) {
         if (req.query.password == config.clear_password) {
             var users = req.body;
-            var totalFollows = _.flatten(users.map(function(user) { return user.follows; })).length;
+            var totalFollows = _.flatten(_.pluck(users, 'follows')).length;
 
             var sendResponse = _.after(totalFollows, function() {
                 res.status(200).send('Users added');
