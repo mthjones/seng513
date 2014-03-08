@@ -1,5 +1,7 @@
-var db = require('../../config/db');
+var db = require('../../config/db'),
+    _ =  require('lodash');
 
+const pageSize = 30;
 
 module.exports = {
     newForm: function(req, res, next) {
@@ -31,37 +33,75 @@ module.exports = {
     },
 
     view: function(req, res, next) {
-        db.User.find(req.params.id).then(function(user) {
-            if (user) {
+        var page = req.query.page ? parseInt(req.query.page) : 1;
+        var render = function (user, photos, isFollowing, showMore) {
+            var showFollow = !!req.user && req.user.id.toString() !== req.params.id;
+            res.render('users/view', {user: user, photos: photos, nextPage: page + 1, following: isFollowing, showFollow: showFollow, showMore: showMore, loggedIn: !!req.user });
+        };
 
+        if (req.user) {
+            db.User.find(req.params.id).then(function(user) {
+                if (user !== null) {
+                    user.hasFollower(req.user).then(function(isFollowing) {
+                        user.getPhotoes().then(function(allPhotos) {
+                            return allPhotos.length;
+                        }).then(function(count) {
+                            user.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [
+                                ['Photoes.createdAt', 'DESC']
+                            ]}).then(function (photos) {
+                                var respond = _.after(photos.length, render);
 
-                user.getPhotoes().success(function(photos){
+                                if (photos.length === 0) {
+                                    render(user, []);
+                                    return;
+                                }
 
+                                photos.forEach(function (photo) {
+                                    photo.getUser().then(function (user) {
+                                        photo.user = user;
+                                        var showMore = (pageSize * (page - 1)) + photos.length < count;
+                                        respond(user, photos, isFollowing, showMore);
+                                    });
+                                });
+                            });
+                        });
+                    });
+                } else {
+                    res.status(404).render('404');
+                }
+            });
+        } else {
+            db.User.find(req.params.id).then(function(user) {
+                if (user !== null) {
+                    user.getPhotoes().then(function(allPhotos) {
+                        return allPhotos.length;
+                    }).then(function(count) {
+                        user.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [
+                            ['Photoes.createdAt', 'DESC']
+                        ]}).then(function (photos) {
+                            var respond = _.after(photos.length, render);
 
+                            if (photos.length === 0) {
+                                render(user, []);
+                                return;
+                            }
 
-                   //var photoArray =
-                   //photos.map(moment(photos.createdAt).fromNow())
-                  // var time_ago = photos[1].createdAt
-                   //console.log(photos[1].createdAt)
-
-                   //time_ago = moment(time_ago).fromNow()
-                   //console.log(time_ago)
-
-
-                   res.locals = {user: user, photos: photos}
-
-                   res.render('users/view');
-
-                })
-
-
-
-
-            } else {
-                res.status(404).render('404');
-            }
-        });
+                            photos.forEach(function (photo) {
+                                photo.getUser().then(function (user) {
+                                    photo.user = user;
+                                    var showMore = (pageSize * (page - 1)) + photos.length < count;
+                                    respond(user, photos, false, showMore);
+                                });
+                            });
+                        });
+                    });
+                } else {
+                    res.status(404).render('404');
+                }
+            });
+        }
     },
+
 
     follow: function(req, res, next) {
         db.User.find(req.params.id).then(function(followee) {

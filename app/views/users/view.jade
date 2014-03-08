@@ -1,17 +1,33 @@
 extends ../layout
 
 block append nav-links
-  li: a(href="/feed") Feed
-  li: a(href="/photos/new") Upload
+  if loggedIn
+    li: a(href="/feed") Feed
+    li: a(href="/photos/new") Upload
+  else
+    li.active: a(href="/sessions/new") Login
+    li: a(href="/users/new") Register
 
 block append nav-right-links
-  li: a(href="/logout") Logout
+  if loggedIn
+    li: a(href="/logout") Logout
 
 block append content
+  .photos-container.container-fluid
+    if showFollow
+      .row
+        if following
+          a.btn.btn-block.btn-danger.stream-button(href="/users/" + user.id + "/unfollow") Unfollow
+        else
+          a.btn.btn-block.btn-success.stream-button(href="/users/" + user.id + "/follow") Follow
+    if photos.length === 0
+      .alert.alert-info
+        strong No images to show!
     each photo in photos
-        img(src= 'http://127.0.0.1:9000/photos/thumbnail/' + photo.id + '.jpg')
-        p
-            |Uploaded by&nbsp;
-            a(href="/users/#{user.id}", title:#{user.username}) #{user.username}
-            |&nbsp; #{photo.timeAgo()}
-     //a(href="/users/#{user.id}", title:#{user.username}) #{user.username}  #{photo.timeAgo()}
+      .row
+        include ../partials/photo
+
+    if showMore
+      .row
+        a.btn.btn-default.btn-block.stream-button(href="/users/" + user.id + "?page=" + nextPage) more
+

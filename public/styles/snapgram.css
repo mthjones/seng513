@@ -6,6 +6,10 @@ body {
     .photos-container .row:first-of-type {
         margin-top: -20px !important;
     }
+
+    .stream-button {
+        margin-bottom: 1px !important;
+    }
 }
 
 .separator {
@@ -39,4 +43,11 @@ figure img {
     padding: 5px;
     font-size: 0.9em;
     color: #666;
+}
+
+.stream-button {
+    max-width: 400px;
+    width: 100%;
+    border-radius: 0;
+    margin: 0 auto 20px;
 }

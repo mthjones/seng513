@@ -14,7 +14,7 @@ var config = {
             username: 'root',
             password: null
         },
-        clear_password: 1234,
+        clear_password: "1234",
         setup: function(db, app) {
 
             return db.User.create({name: 'test', username: 'test', password: 'test'}).success(function(user){
@@ -35,7 +35,7 @@ var config = {
 
 
 
-            
+
 
 
             v.save()
@@ -54,7 +54,7 @@ var config = {
             username: process.env.SNAPGRAM_USER,
             password: process.env.SNAPGRAM_PASS
         },
-        clear_password: 1234
+        clear_password: "1234"
     }
 };
 
