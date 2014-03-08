@@ -91,7 +91,7 @@ module.exports = {
                             user.getFeed().then(function(feed) {
                                 feed.addPhoto(photo);
                             });
-                            user.getFollower().then(function(followers) {
+                            user.getFollowers().then(function(followers) {
                                 followers.forEach(function(follower) {
                                     follower.getFeed().then(function(feed) {
                                         feed.addPhoto(photo);

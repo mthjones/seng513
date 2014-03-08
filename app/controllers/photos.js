@@ -47,7 +47,7 @@ module.exports = {
                     req.user.getFeed().then(function(feed) {
                         feed.addPhoto(photo);
                     });
-                    req.user.getFollower().then(function(followers) {
+                    req.user.getFollowers().then(function(followers) {
                         if (followers.length === 0) {
                             res.redirect(302, '/feed');
                             return;
@@ -77,7 +77,7 @@ module.exports = {
     share: function(req, res, next) {
         db.Photo.find(req.params.id).then(function(photo) {
             photo.addSharer(req.user).then(function() {
-                req.user.getFollower().then(function(followers) {
+                req.user.getFollowers().then(function(followers) {
                     if (followers.length === 0) {
                         res.status(200).send();
                         return;
