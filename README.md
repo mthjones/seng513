@@ -34,4 +34,4 @@ Requirements
 8. (Un)Follow a Stream ✓
 9. Serving Images ✓
 * Bulk Upload Requirements ✓
-* Share x
+* Share x (partial)
