@@ -20,6 +20,9 @@ block append content
           a.btn.btn-block.btn-danger.stream-button(href="/users/" + user.id + "/unfollow") Unfollow
         else
           a.btn.btn-block.btn-success.stream-button(href="/users/" + user.id + "/follow") Follow
+    if photos.length === 0
+      .alert.alert-info
+        strong No images to show!
     each photo in photos
       .row
         include ../partials/photo
