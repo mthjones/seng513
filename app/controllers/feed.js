@@ -7,7 +7,7 @@ module.exports = {
     show: function(req, res, next) {
         var page = req.query.page ? parseInt(req.query.page) : 1;
         var render = function (photos, showMore) {
-            res.render('photos/list', {photos: photos, nextPage: page + 1, showMore: showMore});
+            res.render('photos/list', {photos: photos, nextPage: page + 1, showMore: showMore, currentUser: req.user});
         };
 
         req.user.getFeed().then(function(feed) {
