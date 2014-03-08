@@ -43,7 +43,7 @@ module.exports = {
             res.render('users/view', {user: user, photos: photos, nextPage: page + 1, following: isFollowing, showFollow: showFollow, showMore: showMore , currentUser: req.user});
         };
 
-        db.User.find(req.params.id).then(function(user) {
+        db.User.find({where: {id: req.params.id}, include: [{model: db.Photo, as: 'SharedPhotos'}]}).then(function(user) {
             if (user !== null) {
                 user.hasFollower(req.user).then(function(isFollowing) {
                     user.getPhotoes().then(function(allPhotos) {
