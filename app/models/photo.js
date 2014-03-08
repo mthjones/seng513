@@ -19,7 +19,7 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 Photo.belongsTo(models.User);
                 Photo.hasMany(models.Feed);
-                Photo.hasMany(models.User, {as: 'Sharer', through: 'SharedPhotos'});
+                Photo.hasMany(models.User, {as: 'Sharers', through: 'SharedPhotos'});
             }
 
         },
