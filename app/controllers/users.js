@@ -48,7 +48,7 @@ module.exports = {
                         }).then(function(count) {
                             user.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [
                                 ['Photoes.createdAt', 'DESC']
-                            ]}).then(function (photos) {
+                            ], include: [{model: db.User, as: 'Sharers'}]}).then(function (photos) {
                                 var respond = _.after(photos.length, render);
 
                                 if (photos.length === 0) {
@@ -78,7 +78,7 @@ module.exports = {
                     }).then(function(count) {
                         user.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [
                             ['Photoes.createdAt', 'DESC']
-                        ]}).then(function (photos) {
+                        ], include: [{model: db.User, as: 'Sharers'}]}).then(function (photos) {
                             var respond = _.after(photos.length, render);
 
                             if (photos.length === 0) {

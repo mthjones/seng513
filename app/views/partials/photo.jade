@@ -5,6 +5,13 @@ figure
       span.glyphicon.glyphicon-user
       = " "
       a(href="/users/" + photo.user.id) #{photo.user.name}
+      if photo.sharers && photo.sharers.length !== 0
+        |  (shared by
+        = " "
+        each sharer in photo.sharers
+          a(href="/users/" + sharer.id) #{sharer.name}
+          | #{$index === photo.sharers.length-1 ? "" : ", "}
+        | )
     span.pull-right
       span.glyphicon.glyphicon-calendar
       = " "

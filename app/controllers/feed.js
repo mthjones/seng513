@@ -24,10 +24,13 @@ module.exports = {
                     }
 
                     photos.forEach(function(photo) {
-                        photo.getUser().then(function(user) {
-                            photo.user = user;
-                            var showMore = (pageSize * (page - 1)) + photos.length < count;
-                            respond(photos, showMore);
+                        photo.getSharers().then(function(sharers) {
+                            photo.getUser().then(function(user) {
+                                photo.user = user;
+                                photo.sharers = sharers;
+                                var showMore = (pageSize * (page - 1)) + photos.length < count;
+                                respond(photos, showMore);
+                            });
                         });
                     });
                 });
