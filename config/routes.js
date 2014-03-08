@@ -22,7 +22,7 @@ module.exports = function(app) {
 
     app.get('/users/new', usersCtrl.newForm);
     app.post('/users/create', usersCtrl.create);
-    app.get('/users/:id', usersCtrl.view);
+    app.get('/users/:id', ensureAuthed, usersCtrl.view);
     app.get('/users/:id/follow', ensureAuthed, usersCtrl.follow);
     app.get('/users/:id/unfollow', ensureAuthed, usersCtrl.unfollow);
 
@@ -34,6 +34,6 @@ module.exports = function(app) {
 
     app.get('/photos/new', ensureAuthed, photosCtrl.newForm);
     app.post('/photos/create', ensureAuthed, photosCtrl.create);
-    app.get('/photos/thumbnail/:id.:ext', photosCtrl.thumbnail);
-    app.get('/photos/:id.:ext', photosCtrl.view);
+    app.get('/photos/thumbnail/:id.:ext', ensureAuthed, photosCtrl.thumbnail);
+    app.get('/photos/:id.:ext', ensureAuthed, photosCtrl.view);
 };
