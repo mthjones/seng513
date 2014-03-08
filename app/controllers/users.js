@@ -10,26 +10,30 @@ module.exports = {
     },
 
     create: function(req, res, next) {
-        var user = db.User.build(req.body);
-        user.save()
-            .success(function(user) {
-                db.Feed.create().then(function(feed) {
-                    user.setFeed(feed).then(function() {
-                        req.login(user, function(err) {
-                            if (err) {
-                                return next(err);
-                            }
-                            return res.redirect(302, '/feed');
-                        });
+        db.User.create(req.body).success(function(user) {
+            db.Feed.create().then(function(feed) {
+                user.setFeed(feed).then(function() {
+                    req.login(user, function(err) {
+                        if (err) {
+                            return next(err);
+                        }
+                        return res.redirect(302, '/feed');
                     });
                 });
-            })
-            .error(function(err) {
-                if (err.code === 'ER_DUP_ENTRY') {
-                    req.flash('error', 'Username taken');
-                }
-                res.redirect(302, '/users/new');
             });
+        }).error(function(err) {
+            if (err.code === 'ER_DUP_ENTRY') {
+                req.flash('error', 'Username taken');
+            }
+            if (err.name && err.name[0] === 'Validation notEmpty failed: name') {
+                req.flash('error', 'Name can not be empty');
+            } else if (err.username && err.username[0] === 'Validation notEmpty failed: username') {
+                req.flash('error', 'Username can not be empty');
+            } else if (err.password && err.password[0] === 'Validation notEmpty failed: password') {
+                req.flash('error', 'Password can not be empty');
+            }
+            res.redirect(302, '/users/new');
+        });
     },
 
     view: function(req, res, next) {
