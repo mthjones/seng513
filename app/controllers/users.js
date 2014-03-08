@@ -52,7 +52,7 @@ module.exports = {
                                 var respond = _.after(photos.length, render);
 
                                 if (photos.length === 0) {
-                                    render([]);
+                                    render(user, []);
                                     return;
                                 }
 
@@ -82,7 +82,7 @@ module.exports = {
                             var respond = _.after(photos.length, render);
 
                             if (photos.length === 0) {
-                                render([]);
+                                render(user, []);
                                 return;
                             }
 
