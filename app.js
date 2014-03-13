@@ -10,6 +10,5 @@ require('./config/routes')(app);
 
 db.sequelize.sync({force: config.envname === "development"}).complete(function(err) {
     if (err) throw err;
-    if (config.setup) config.setup(db, app);
     app.listen(config.port);
 });
