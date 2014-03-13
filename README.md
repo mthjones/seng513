@@ -31,3 +31,19 @@ Requirements
 9. Serving Images ✓
 * Bulk Upload Requirements ✓
 * Share x (partial)
+
+Unit Test Functions
+---
+* users.js -> follow
+* bulk.js -> clear
+
+Integration Test Scenario
+---
+1. Create User
+2. Follow another user
+3. Logout
+4. Login with other user
+5. Upload photo
+6. Logout
+7. Login with first user (from step 1)
+8. Make sure photo is in feed
