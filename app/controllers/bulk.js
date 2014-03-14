@@ -17,7 +17,8 @@ module.exports = {
     clear: function (req, res, next) {
         if (req.query.password === config.clear_password) {
             db.sequelize.sync({force: true}).then(function() {
-                res.status(200).send('DB cleared');
+                res.status(200);
+                res.send('DB cleared');
             }).catch(function(err) {
                 res.status(500).send("Couldn't clear DB");
             });

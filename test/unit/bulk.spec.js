@@ -1,6 +1,8 @@
 var expect = require('chai').expect,
     sinon = require('sinon'),
-    ctrl = require('../../app/controllers/bulk');
+    Promise = require('bluebird'),
+    ctrl = require('../../app/controllers/bulk'),
+    db = require('../../config/db');
 
 describe('Bulk Controller', function() {
     describe('no password specified', function() {
@@ -42,7 +44,20 @@ describe('Bulk Controller', function() {
 
     describe('correct password', function() {
         it('calls sync with force clear');
-        it('sends ok response with successful clear');
+        it('sends ok response with successful clear', function(done) {
+            var cb = function() {
+                expect(responseMock.status.calledWith(200)).to.equal(true);
+                done();
+            };
+
+            var requestMock = {query: {password: '1234'}};
+            var responseMock = {status: sinon.spy(), send: sinon.spy()};
+            var syncMock = sinon.stub().returns(new Promise(function(resolve, reject) {
+                resolve(cb);
+            }));
+            db.sequelize = {sync: syncMock};
+            ctrl.clear(requestMock, responseMock);
+        });
         it('sends correct message with successful clear');
         it('sends internal server error with failed clear');
         it('sends correct message with failed clear');
