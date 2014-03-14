@@ -3,6 +3,24 @@ var expect = require('chai').expect,
     ctrl = require('../../app/controllers/bulk');
 
 describe('Bulk Controller', function() {
+    describe('no password specified', function() {
+        it('sends unauthorized response', function() {
+            var requestMock = {query: {}};
+            var statusMock = sinon.spy();
+            var responseMock = {status: statusMock, send: sinon.spy()};
+            ctrl.clear(requestMock, responseMock);
+            expect(statusMock.calledWith(401));
+        });
+        it('sends the correct message', function()
+        {
+            var requestMock = {query: {}};
+            var sendMock = sinon.spy();
+            var statusMock = sinon.spy();
+            var responseMock = {status: statusMock, send: sendMock};
+            ctrl.clear(requestMock, responseMock);
+            expect(sendMock.calledWith("Unauthorized to clear the database")); 
+        });
+    });
     describe('incorrect password', function() {
         it('sends unauthorized response', function() {
             var requestMock = {query: {password: '0000'}};
@@ -11,7 +29,15 @@ describe('Bulk Controller', function() {
             ctrl.clear(requestMock, responseMock);
             expect(statusMock.calledWith(401));
         });
-        it('sends the correct message');
+        it('sends the correct message', function()
+        {
+            var requestMock = {query: {password: '0000'}};
+            var sendMock = sinon.spy();
+            var statusMock = sinon.spy();
+            var responseMock = {status: statusMock, send: sendMock};
+            ctrl.clear(requestMock, responseMock);
+            expect(sendMock.calledWith("Unauthorized to clear the database")); 
+        });
     });
 
     describe('correct password', function() {
