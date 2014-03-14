@@ -9,7 +9,7 @@ describe('Bulk Controller', function() {
             var statusMock = sinon.spy();
             var responseMock = {status: statusMock, send: sinon.spy()};
             ctrl.clear(requestMock, responseMock);
-            expect(statusMock.calledWith(401));
+            expect(statusMock.calledWith(401)).to.equal(true);
         });
         it('sends the correct message', function()
         {
@@ -18,7 +18,7 @@ describe('Bulk Controller', function() {
             var statusMock = sinon.spy();
             var responseMock = {status: statusMock, send: sendMock};
             ctrl.clear(requestMock, responseMock);
-            expect(sendMock.calledWith("Unauthorized to clear the database")); 
+            expect(sendMock.calledWith("Unauthorized to clear the database")).to.equal(true);
         });
     });
     describe('incorrect password', function() {
@@ -27,7 +27,7 @@ describe('Bulk Controller', function() {
             var statusMock = sinon.spy();
             var responseMock = {status: statusMock, send: sinon.spy()};
             ctrl.clear(requestMock, responseMock);
-            expect(statusMock.calledWith(401));
+            expect(statusMock.calledWith(401)).to.equal(true);
         });
         it('sends the correct message', function()
         {
@@ -36,7 +36,7 @@ describe('Bulk Controller', function() {
             var statusMock = sinon.spy();
             var responseMock = {status: statusMock, send: sendMock};
             ctrl.clear(requestMock, responseMock);
-            expect(sendMock.calledWith("Unauthorized to clear the database")); 
+            expect(sendMock.calledWith("Unauthorized to clear the database")).to.equal(true);
         });
     });
 
