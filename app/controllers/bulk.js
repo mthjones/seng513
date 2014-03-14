@@ -22,7 +22,8 @@ module.exports = {
                 res.status(500).send("Couldn't clear DB");
             });
         } else {
-            res.status(401).send("Unauthorized to clear the database");
+            res.status(401);
+            res.send("Unauthorized to clear the database");
         }
     },
 
