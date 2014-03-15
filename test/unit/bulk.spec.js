@@ -12,48 +12,53 @@ chai.use(chaiAsPromised);
 
 describe('Bulk Controller', function() {
     describe('no password specified', function() {
-        it('sends unauthorized response', function() {
-            var requestMock = {query: {}};
-            var statusMock = sinon.spy();
-            var responseMock = {status: statusMock, send: sinon.spy()};
-            ctrl.clear(requestMock, responseMock);
-            expect(statusMock).to.have.been.calledWith(401);
+        var requestMock, responseMock;
+
+        beforeEach(function() {
+            requestMock = {query: {}};
+            responseMock = {status: sinon.spy(), send: sinon.spy()};
         });
-        it('sends the correct message', function()
-        {
-            var requestMock = {query: {}};
-            var sendMock = sinon.spy();
-            var statusMock = sinon.spy();
-            var responseMock = {status: statusMock, send: sendMock};
+
+        it('sends unauthorized response', function() {
             ctrl.clear(requestMock, responseMock);
-            expect(sendMock).to.have.been.calledWith("Unauthorized to clear the database");
+            expect(responseMock.status).to.have.been.calledWith(401);
+        });
+
+        it('sends the correct message', function() {
+            ctrl.clear(requestMock, responseMock);
+            expect(responseMock.send).to.have.been.calledWith("Unauthorized to clear the database");
         });
     });
     describe('incorrect password', function() {
-        it('sends unauthorized response', function() {
-            var requestMock = {query: {password: '0000'}};
-            var statusMock = sinon.spy();
-            var responseMock = {status: statusMock, send: sinon.spy()};
-            ctrl.clear(requestMock, responseMock);
-            expect(statusMock).to.have.been.calledWith(401);
+        var requestMock, responseMock;
+
+        beforeEach(function() {
+            requestMock = {query: {password: '0000'}};
+            responseMock = {status: sinon.spy(), send: sinon.spy()};
         });
-        it('sends the correct message', function()
-        {
-            var requestMock = {query: {password: '0000'}};
-            var sendMock = sinon.spy();
-            var statusMock = sinon.spy();
-            var responseMock = {status: statusMock, send: sendMock};
+
+        it('sends unauthorized response', function() {
             ctrl.clear(requestMock, responseMock);
-            expect(sendMock).to.have.been.calledWith("Unauthorized to clear the database");
+            expect(responseMock.status).to.have.been.calledWith(401);
+        });
+
+        it('sends the correct message', function() {
+            ctrl.clear(requestMock, responseMock);
+            expect(responseMock.send).to.have.been.calledWith("Unauthorized to clear the database");
         });
     });
 
     describe('correct password', function() {
+        var requestMock, responseMock;
+
+        beforeEach(function() {
+            requestMock = {query: {password: '1234'}};
+            responseMock = {status: sinon.spy(), send: sinon.spy()};
+        });
+
         it('calls sync with force clear');
         it('sends ok response with successful clear', function() {
             var resolvedPromise = Promise.resolve();
-            var requestMock = {query: {password: '1234'}};
-            var responseMock = {status: sinon.spy(), send: sinon.spy()};
             var syncMock = sinon.stub().returns(resolvedPromise);
             db.sequelize = {sync: syncMock};
             ctrl.clear(requestMock, responseMock);
