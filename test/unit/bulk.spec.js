@@ -50,19 +50,16 @@ describe('Bulk Controller', function() {
 
     describe('correct password', function() {
         it('calls sync with force clear');
-        it('sends ok response with successful clear', function(done) {
-            var cb = function() {
-                expect(responseMock.status.calledWith(200)).to.equal(true);
-                done();
-            };
-
+        it('sends ok response with successful clear', function() {
+            var resolvedPromise = Promise.resolve();
             var requestMock = {query: {password: '1234'}};
             var responseMock = {status: sinon.spy(), send: sinon.spy()};
-            var syncMock = sinon.stub().returns(new Promise(function(resolve, reject) {
-                resolve(cb);
-            }));
+            var syncMock = sinon.stub().returns(resolvedPromise);
             db.sequelize = {sync: syncMock};
             ctrl.clear(requestMock, responseMock);
+            return resolvedPromise.then(function() {
+                expect(responseMock.status).to.have.been.calledWith(200);
+            });
         });
         it('sends correct message with successful clear');
         it('sends internal server error with failed clear');
