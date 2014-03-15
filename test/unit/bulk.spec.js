@@ -17,7 +17,7 @@ describe('Bulk Controller', function() {
             var statusMock = sinon.spy();
             var responseMock = {status: statusMock, send: sinon.spy()};
             ctrl.clear(requestMock, responseMock);
-            expect(statusMock.calledWith(401)).to.equal(true);
+            expect(statusMock).to.have.been.calledWith(401);
         });
         it('sends the correct message', function()
         {
@@ -26,7 +26,7 @@ describe('Bulk Controller', function() {
             var statusMock = sinon.spy();
             var responseMock = {status: statusMock, send: sendMock};
             ctrl.clear(requestMock, responseMock);
-            expect(sendMock.calledWith("Unauthorized to clear the database")).to.equal(true);
+            expect(sendMock).to.have.been.calledWith("Unauthorized to clear the database");
         });
     });
     describe('incorrect password', function() {
@@ -35,7 +35,7 @@ describe('Bulk Controller', function() {
             var statusMock = sinon.spy();
             var responseMock = {status: statusMock, send: sinon.spy()};
             ctrl.clear(requestMock, responseMock);
-            expect(statusMock.calledWith(401)).to.equal(true);
+            expect(statusMock).to.have.been.calledWith(401);
         });
         it('sends the correct message', function()
         {
@@ -44,7 +44,7 @@ describe('Bulk Controller', function() {
             var statusMock = sinon.spy();
             var responseMock = {status: statusMock, send: sendMock};
             ctrl.clear(requestMock, responseMock);
-            expect(sendMock.calledWith("Unauthorized to clear the database")).to.equal(true);
+            expect(sendMock).to.have.been.calledWith("Unauthorized to clear the database");
         });
     });
 
