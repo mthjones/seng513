@@ -1,8 +1,14 @@
-var expect = require('chai').expect,
+var chai = require('chai'),
+    expect = chai.expect,
     sinon = require('sinon'),
+    sinonChai = require('sinon-chai'),
+    chaiAsPromised = require('chai-as-promised'),
     Promise = require('bluebird'),
     ctrl = require('../../app/controllers/bulk'),
     db = require('../../config/db');
+
+chai.use(sinonChai);
+chai.use(chaiAsPromised);
 
 describe('Bulk Controller', function() {
     describe('no password specified', function() {
