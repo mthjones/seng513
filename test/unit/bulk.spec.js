@@ -75,7 +75,16 @@ describe('Bulk Controller', function() {
                 expect(responseMock.status).to.have.been.calledWith(200);
             });
         });
-        it('sends correct message with successful clear');
+        it('sends correct message with successful clear', function()
+        {
+            var resolvedPromise = Promise.resolve();
+            var syncMock = sinon.stub().returns(resolvedPromise);
+            db.sequelize = {sync: syncMock};
+            ctrl.clear(requestMock, responseMock);
+            return resolvedPromise.then(function() {
+                expect(responseMock.send).to.have.been.calledWith('DB cleared');
+            });
+        });
         it('sends internal server error with failed clear');
         it('sends correct message with failed clear');
     });
