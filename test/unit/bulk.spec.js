@@ -85,7 +85,25 @@ describe('Bulk Controller', function() {
                 expect(responseMock.send).to.have.been.calledWith('DB cleared');
             });
         });
-        it('sends internal server error with failed clear');
-        it('sends correct message with failed clear');
+        it('sends internal server error with failed clear', function()
+        {
+            var rejectedPromise = Promise.reject();
+            var syncMock = sinon.stub().returns(rejectedPromise);
+            db.sequelize = {sync: syncMock};
+            ctrl.clear(requestMock, responseMock);
+            return expect(rejectedPromise).to.have.been.rejected.then(function() {
+                expect(responseMock.status).to.have.been.calledWith(500);
+            });
+        });
+        it('sends correct message with failed clear', function()
+        {
+            var rejectedPromise = Promise.reject();
+            var syncMock = sinon.stub().returns(rejectedPromise);
+            db.sequelize = {sync: syncMock};
+            ctrl.clear(requestMock, responseMock);
+            return expect(rejectedPromise).to.have.been.rejected.then(function() {
+                expect(responseMock.send).to.have.been.calledWith("Couldn't clear DB");
+            });
+        });
     });
 });

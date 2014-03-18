@@ -20,7 +20,8 @@ module.exports = {
                 res.status(200);
                 res.send('DB cleared');
             }).catch(function(err) {
-                res.status(500).send("Couldn't clear DB");
+                res.status(500);
+                res.send("Couldn't clear DB");
             });
         } else {
             res.status(401);
