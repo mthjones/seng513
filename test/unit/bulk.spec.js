@@ -56,7 +56,16 @@ describe('Bulk Controller', function() {
             responseMock = {status: sinon.spy(), send: sinon.spy()};
         });
 
-        it('calls sync with force clear');
+        it('calls sync with force clear', function()
+        {
+            var resolvedPromise = Promise.resolve();
+            var syncMock = sinon.stub().returns(resolvedPromise);
+            db.sequelize = {sync: syncMock};
+            ctrl.clear(requestMock, responseMock);
+            return resolvedPromise.then(function() {
+                expect(syncMock).to.have.been.calledWith({force: true});
+            });
+        });
         it('sends ok response with successful clear', function() {
             var resolvedPromise = Promise.resolve();
             var syncMock = sinon.stub().returns(resolvedPromise);
