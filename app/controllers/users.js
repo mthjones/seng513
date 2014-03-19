@@ -79,7 +79,8 @@ module.exports = {
     follow: function(req, res, next) {
         db.User.find(req.params.id).then(function(followee) {
             if (followee === null) {
-                res.status(404).render('404');
+                res.status(404);
+                res.render('404');
             } else {
                 followee.addFollower(req.user).then(function() {
                     res.redirect(302, '/feed');
