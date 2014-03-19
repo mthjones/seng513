@@ -2,9 +2,12 @@ var express = require('express'),
     path = require('path'),
     passport = require('passport'),
     flash = require('connect-flash'),
-    config = require('./config');
+    config = require('./config'),
+    fs = require('fs'),
+    winston = require('winston'),
+    expressWinston = require('express-winston');
 
-
+var logFile = fs.createWriteStream('./myLogFile.log', {flags: 'a'});
 
 module.exports = function(app) {
     app.configure(function() {
@@ -24,6 +27,8 @@ module.exports = function(app) {
         app.use(flash());
         app.use(passport.initialize());
         app.use(passport.session());
+        app.use(express.logger({stream: logFile, format: 'tiny'}));   //logging
+
 
         app.use(app.router);
         app.use(function(err, req, res, next) {

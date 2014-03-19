@@ -1,0 +1,13 @@
+GET /feed 302 82 - 8 ms
+GET /sessions/new 304 - - 293 ms
+GET /users/new 304 - - 36 ms
+POST /users/create 302 66 - 38 ms
+GET /feed 200 - - 68 ms
+GET /photos/new 304 - - 34 ms
+POST /photos/create 302 66 - 35 ms
+GET /feed 200 - - 13 ms
+GET /photos/thumbnail/1.jpg 200 - - 62 ms
+GET /users/1 200 - - 81 ms
+GET /photos/thumbnail/1.jpg 200 - - 72 ms
+GET /users/1 302 82 - 6 ms
+GET /sessions/new 304 - - 301 ms
