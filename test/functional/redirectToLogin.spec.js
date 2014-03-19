@@ -121,10 +121,13 @@ describe('Redirect to login', function() {
         });
 
         it("should not redirect away from user creation POST endpoint", function() {
-            request.post("http://localhost:9000/users/create").redirects(0).end(function(response) {
-                expect(response.status).to.equal(302);
-                expect(response.header['location']).not.to.equal("/sessions/new");
-            });
+            request.post("http://localhost:9000/users/create")
+                .send({name: 'test', username: 'test', password: 'test'})
+                .redirects(0)
+                .end(function(response) {
+                    expect(response.status).to.equal(302);
+                    expect(response.header['location']).not.to.equal("/sessions/new");
+                });
         });
 
         it("should not redirect away from user login", function() {
@@ -134,18 +137,42 @@ describe('Redirect to login', function() {
         });
 
         it("should not redirect away from user login POST endpoint", function() {
-            request.post("http://localhost:9000/sessions/create")
-                .send("{name: 'test', username: 'test', password: 'test'}")
-                .redirects(0)
-                .end(function(response) {
-                    expect(response.status).to.equal(302);
-                    expect(response.header['location']).not.to.equal("/sessions/new")
-                });
+            var user = {name: 'abc', username: 'abc', password: 'abc'};
+            request.post("http://localhost:9000/users/create").send(user).end(function() {
+                request.post("http://localhost:9000/sessions/create")
+                    .send(user)
+                    .redirects(0)
+                    .end(function(response) {
+                        expect(response.status).to.equal(302);
+                        expect(response.header['location']).not.to.equal("/sessions/new")
+                    });
+            });
         });
     });
 
     describe('when logged in', function() {
-        it("should not redirect away from viewing user");
+        var user = {name:'loggedIn', username:'loggedInUser', password:'loggedInPass'};
+        var sid;
+
+        beforeEach(function(done) {
+            request.post("http://localhost:9000/users/create").send(user).end(function(response) {
+                var setCookies = response.header['set-cookie']['0'].split(';').map(function(cookie) {
+                    return cookie.split('=')
+                }).reduce(function(obj, curr) {
+                    obj[curr[0]] = curr[1];
+                    return obj;
+                }, {});
+                sid = setCookies.sid;
+                done();
+            });
+        });
+
+        it("should not redirect away from viewing user", function() {
+            request.get("http://localhost:9000/users/1").set('Cookie', 'sid='+sid).redirects(0).end(function(response) {
+                expect(response.status).not.to.equal(302);
+            });
+        });
+
         it("should not redirect away from following user");
         it("should not redirect away from unfollowing user");
         it("should not redirect away from logout");
