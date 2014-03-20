@@ -11,12 +11,16 @@ require('./config/express')(app);
 require('./config/routes')(app);
 
 var users = [];
+var userAgents = [];
+
 
 db.sequelize.sync({force: config.envname === "development"}).complete(function(err) {
     if (err) throw err;
     app.listen(config.port);
 	
-	clear()
+	//clear();
+    testUserUploadPhoto();
+    // testCreateNUsers(5);
 	//bulkUpload()
 });
 
@@ -30,13 +34,8 @@ function randomString(len, charSet) {
     return randomString;
 }
 
-function createNUsers(numUsers)
+function createNUsers(numUsers, callback)
 {
-    function callback()
-    {
-        console.log("Done creating users");
-        console.log(users);
-    }
     var respond = _.after(numUsers, callback);
     
     for(var i = 0 ; i < numUsers;i++)
@@ -46,60 +45,38 @@ function createNUsers(numUsers)
     }
 }
 
-function logoutUser(user)
+function createUser(newUserName, newPassword, callbackFunction)
 {
-    var url = 'http://localhost:9000/logout';
-    
-    function callback(response)
-    {
-        console.log("Logged out user: " + user.username);   
-        //loginUser(user);
-    };
-    
-    request.post(url).send(user).end(callback);
-}
-
-function loginUser(user)
-{
-    var url = 'http://localhost:9000/sessions/create';
-    
-    function callback(response)
-    {
-        var setCookies = response.header['set-cookie']['0'].split(';').map(function(cookie) {
-                    return cookie.split('=')
-                }).reduce(function(obj, curr) {
-                    obj[curr[0]] = curr[1];
-                    return obj;
-                }, {});
-        user.sid = setCookies.sid;
-        //console.log("User: " + user.username + " logged in with sid: " + user.sid);
-    };
-    
-    request.post(url).send(user).end(callback);
-}
-
-function createUser(newUserName, newPassword, callbackF)
-{
-    var user = {name: newUserName, username: newUserName, password: newPassword, sid: 0};
+    var user = {name: newUserName, username: newUserName, password: newPassword};
     var url = 'http://localhost:9000/users/create';
-    
+    var userAgent = request.agent();
     function callback(response)
     {
-        var setCookies = response.header['set-cookie']['0'].split(';').map(function(cookie) {
-                    return cookie.split('=')
-                }).reduce(function(obj, curr) {
-                    obj[curr[0]] = curr[1];
-                    return obj;
-                }, {});
-        user.sid = setCookies.sid;
-        users.push(user);
+        userAgents.push(userAgent);
+        var testUrl = 'http://localhost:9000/feed';
+        userAgent.get(testUrl).end(function()
+        {
+            console.log("feed requested");
+            //console.log("retrieved user" + userAgent.username + "feed");
+        });
+        callbackFunction();
         
-        callbackF();
+        // var setCookies = response.header['set-cookie']['0'].split(';').map(function(cookie) {
+                    // return cookie.split('=')
+                // }).reduce(function(obj, curr) {
+                    // obj[curr[0]] = curr[1];
+                    // return obj;
+                // }, {});
+        // user.sid = setCookies.sid;
+        // users.push(user);
+        // if callbackFunction
+            // callbackFunction();
         //console.log("User created");
         //logoutUser(user);
     };
     
-    request.post(url).send(user).end(callback);
+    
+    userAgent.post(url).send(user).end(callback);
 }
 
 function bulkUpload(){
@@ -126,13 +103,43 @@ function bulkUpload(){
 	
 }
 
+function testCreateNUsers(numberOfUsers)
+{
+    createNUsers(numberOfUsers, function callback()
+    {
+        console.log("Done creating users");
+    });
+}
+
+function uploadPhotoFromUser(userAgent)
+{
+    var url = 'http://localhost:9000/photos/create';
+    
+    function callback(response)
+    {
+        console.log("\n\nuploaded a photo\n\n");
+    };
+    function handle(error)
+    {   
+        console.log("\n\nYO\n\n");
+        console.log(error);
+    }
+    userAgent.post(url).attach('testname', 'images/test2.png').on('error', handle).end(callback);
+}
+
+function testUserUploadPhoto()
+{
+    createUser('rob', '123', function()
+    {
+        uploadPhotoFromUser(userAgents[0]);
+    });
+}
+
 function clear(){
 	request.get('http://127.0.0.1:9000/bulk/clear?password=1234', function(res){
 		console.log("cleared");
         // createUser('rob', '123', function(){console.log("test call")});
-        
-        createNUsers(5);
-        
+
         //console.log(users);
         //logoutUser(0);
         
