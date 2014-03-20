@@ -34,9 +34,16 @@ module.exports = {
             var users = req.body;
             var totalFollows = _.flatten(_.pluck(users, 'follows')).length;
 
-            var sendResponse = _.after(totalFollows, function() {
+            var responseFn = function () {
                 res.status(200).send('Users added');
-            });
+            };
+
+            if (!users.length) {
+                responseFn();
+                return;
+            }
+
+            var sendResponse = _.after(users.length, responseFn);
 
             var finishedUserCreation = _.after(users.length, function() {
                 users.forEach(function(user) {
@@ -74,9 +81,16 @@ module.exports = {
         if (req.query.password === config.clear_password) {
             var photos = req.body;
 
-            var sendResponse = _.after(photos.length, function() {
+            var responseFn = function () {
                 res.status(200).send('Streams added');
-            });
+            };
+
+            if (!photos.length) {
+                responseFn();
+                return;
+            }
+
+            var sendResponse = _.after(photos.length, responseFn);
 
             photos.forEach(function(unparsedPhoto) {
                 var photoBody = {
