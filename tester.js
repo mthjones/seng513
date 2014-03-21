@@ -10,7 +10,16 @@ require('./config/passport');
 require('./config/express')(app);
 require('./config/routes')(app);
 
-var users = [];
+if (process.argv.length < 5){
+	console.error("\n\nPlease enter proper arguments! #users testVersion #followerVersion\n" +
+	"Where testVersions are: feed, upload, or image, and follower version 1,2,3 \n")
+	process.exit(1);
+}
+ 
+var concurrentRequests = process.argv[2];
+var testVersion = process.argv[3];
+var followerVersion = process.argv[4];
+
 var userAgents = [];
 var timingArray = new Array();
 var server;
@@ -23,9 +32,59 @@ db.sequelize.sync({force: config.envname === "development"}).complete(function(e
         server.close();
     };
 	
-    testMultipleUserUploadPhoto(100, done);
-    // testUserUploadPhoto(done);
+    if (testVersion == "upload") {
+			testMultipleUserUploadPhoto(concurrentRequests, function(){})				
+	}
+	else{
+        clear(done);
+    }
+    
+    //testMultipleUserUploadPhoto(100, done);
 });
+
+
+function sendUserRequest(callDone, userAgent){
+	if (testVersion == feed){
+		var url = 'http://localhost:9000/';
+	}
+	else{
+		var url = 'http://localhost:9000/'; //MAKE THIS AN IMAGE LINK
+	}
+ 
+	function callback(err, response)
+    {
+       console.log("\ngot a feed\n");
+ 
+	   var timeTaken = (process.hrtime()[1] - startTime)/1000000   	
+	   console.log("current is: " + process.hrtime()[1] + " and startTime was" + startTime + "timeTaken is " + timeTaken)
+       console.log(timeTaken);
+ 
+	   timingArray.push(timeTaken);
+	   currentCompleted ++;		
+	   console.log("Done # " + currentCompleted)
+       callDone()
+ 
+    };
+    function handle(error)
+	{   
+       console.log("\n\nYO\n\n");
+       console.log(error);
+    }
+    var startTime = process.hrtime()[1];
+    userAgent.get(url).send().end(callback);
+}
+ 
+function test(){		
+	createNUsers(concurrentRequests, function(){
+		//when callDone() gets called concurrentRequests times, done will be called
+		var respond = _.after(concurrentRequests, done);
+		
+		for (var index = 0; index < userAgents.length; ++index) {
+	    	sendUserRequest(respond, userAgents[index]);
+		}		
+	})	
+}
+
 
 function randomString(len, charSet) {
     charSet = charSet || 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -62,15 +121,13 @@ function createUser(newUserName, newPassword, callbackFunction)
     userAgent.post(url).send(user).end(callback);
 }
 
-function bulkUpload(){
+function bulkUpload(done){
 	function callback(res){
 		console.log("uploaded")
+        test(concurrentRequests);
 	}
 	
-	var txt = '{ "employees" : [' +
-	'{ "firstName":"John" , "lastName":"Doe" },' +
-	'{ "firstName":"Anna" , "lastName":"Smith" },' +
-	'{ "firstName":"Peter" , "lastName":"Jones" } ]}';
+ 
 	
 	var bulkData = '[{"id": 1, "name":"jill", "follows":[3,4,5], "password": "abcdef"},' +
 	    '{"id": 2, "name":"bill", "follows":[1,3,5], "password": "abcdef"},' +
@@ -121,6 +178,7 @@ function testMultipleUserUploadPhoto(numUsers, done)
     });
 }
 
+
 function output(numUsers)
 {
     console.log(timingArray);
@@ -136,8 +194,9 @@ function output(numUsers)
 	console.log(min+"  "+"   "+max+"     "+avg+"      "+sum+" \t\t\t  "+through+"\n\n")
 }
 
-function clear(){
+function clear(done){
 	request.get('http://127.0.0.1:9000/bulk/clear?password=1234', function(res){
 		console.log("cleared");
+        bulkUpload(done);
 	});
 }
