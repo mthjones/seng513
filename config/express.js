@@ -20,6 +20,7 @@ module.exports = function(app) {
         app.use(express.compress());
         app.use(express.static(path.join(config.root, 'public')));
         app.use(express.cookieParser());
+        app.use(express.multipart({uploadDir: './images'}));
         app.use(express.urlencoded());
         app.use(express.json());
         app.use(express.methodOverride());
