@@ -12,14 +12,18 @@ require('./config/routes')(app);
 
 var users = [];
 var userAgents = [];
-
+var server;
 
 db.sequelize.sync({force: config.envname === "development"}).complete(function(err) {
     if (err) throw err;
-    app.listen(config.port);
+    server = app.listen(config.port);
+
+    var done = function() {
+        server.close();
+    };
 	
 	//clear();
-    testUserUploadPhoto();
+    testUserUploadPhoto(done);
     // testCreateNUsers(5);
 	//bulkUpload()
 });
@@ -111,13 +115,14 @@ function testCreateNUsers(numberOfUsers)
     });
 }
 
-function uploadPhotoFromUser(userAgent)
+function uploadPhotoFromUser(userAgent, done)
 {
     var url = 'http://localhost:9000/photos/create';
     
     function callback(err, response)
     {
         console.log("\n\nuploaded a photo\n\n");
+        done();
     };
     function handle(error)
     {   
@@ -127,11 +132,11 @@ function uploadPhotoFromUser(userAgent)
     userAgent.post(url).attach('photo', 'images/test2.png').send().end(callback);
 }
 
-function testUserUploadPhoto()
+function testUserUploadPhoto(done)
 {
     createUser('rob', '123', function()
     {
-        uploadPhotoFromUser(userAgents[0]);
+        uploadPhotoFromUser(userAgents[0], done);
     });
 }
 
