@@ -12,6 +12,7 @@ require('./config/routes')(app);
 
 var users = [];
 var userAgents = [];
+var timingArray = new Array();
 var server;
 
 db.sequelize.sync({force: config.envname === "development"}).complete(function(err) {
@@ -22,10 +23,8 @@ db.sequelize.sync({force: config.envname === "development"}).complete(function(e
         server.close();
     };
 	
-	//clear();
-    testUserUploadPhoto(done);
-    // testCreateNUsers(5);
-	//bulkUpload()
+    testMultipleUserUploadPhoto(100, done);
+    // testUserUploadPhoto(done);
 });
 
 function randomString(len, charSet) {
@@ -57,28 +56,8 @@ function createUser(newUserName, newPassword, callbackFunction)
     function callback(response)
     {
         userAgents.push(userAgent);
-        var testUrl = 'http://localhost:9000/feed';
-        userAgent.get(testUrl).end(function()
-        {
-            console.log("feed requested");
-            //console.log("retrieved user" + userAgent.username + "feed");
-        });
         callbackFunction();
-        
-        // var setCookies = response.header['set-cookie']['0'].split(';').map(function(cookie) {
-                    // return cookie.split('=')
-                // }).reduce(function(obj, curr) {
-                    // obj[curr[0]] = curr[1];
-                    // return obj;
-                // }, {});
-        // user.sid = setCookies.sid;
-        // users.push(user);
-        // if callbackFunction
-            // callbackFunction();
-        //console.log("User created");
-        //logoutUser(user);
     };
-    
     
     userAgent.post(url).send(user).end(callback);
 }
@@ -103,53 +82,62 @@ function bulkUpload(){
 		.set('Content-Type', 'application/json')
 		.send(bulkData)
 		.end(callback)
-		
-	
-}
-
-function testCreateNUsers(numberOfUsers)
-{
-    createNUsers(numberOfUsers, function callback()
-    {
-        console.log("Done creating users");
-    });
 }
 
 function uploadPhotoFromUser(userAgent, done)
 {
     var url = 'http://localhost:9000/photos/create';
     
+    //var startTime = process.hrtime()[1];
+    var startD = new Date();
     function callback(err, response)
     {
-        console.log("\n\nuploaded a photo\n\n");
+        var endD = new Date();
+        var timeTaken = endD - startD;
+        //var timeTaken = (process.hrtime()[1] - startTime)/1000000;
+        timingArray.push(timeTaken);
         done();
     };
-    function handle(error)
-    {   
-        console.log("\n\nYO\n\n");
-        console.log(error);
-    }
+   
     userAgent.post(url).attach('photo', 'images/test2.png').send().end(callback);
 }
 
-function testUserUploadPhoto(done)
+function testMultipleUserUploadPhoto(numUsers, done)
 {
-    createUser('rob', '123', function()
+    createNUsers(numUsers, function()
     {
-        uploadPhotoFromUser(userAgents[0], done);
+        var callback = _.after(numUsers, function()
+        {
+            console.log("Done uploading all photos");
+            output(numUsers);
+            done();
+        });
+            
+            
+        for(var i = 0 ; i < numUsers; i++)
+        {
+            uploadPhotoFromUser(userAgents[i], callback);
+        }
     });
+}
+
+function output(numUsers)
+{
+    console.log(timingArray);
+    var min = Math.round(Math.min.apply(null, timingArray)),
+	    max = Math.round(Math.max.apply(null, timingArray)),
+	 	sum = Math.round(timingArray.reduce(function(a, b) { return a + b })),
+		avg = Math.round(sum / timingArray.length),
+		through = Number((numUsers/(sum * 1000 * 1000)).toString().match(/^\d+(?:\.\d{0,2})?/));
+		
+	console.log("\n\n\tTiming Results (milliseconds)\n")
+	console.log("Min\tMax\tMean\tTotal Time\t  Throughput (Requests/Second)")
+	console.log("---------------------------------------------------------------------")
+	console.log(min+"  "+"   "+max+"     "+avg+"      "+sum+" \t\t\t  "+through+"\n\n")
 }
 
 function clear(){
 	request.get('http://127.0.0.1:9000/bulk/clear?password=1234', function(res){
 		console.log("cleared");
-        // createUser('rob', '123', function(){console.log("test call")});
-
-        //console.log(users);
-        //logoutUser(0);
-        
-        //createUser('sam', 'abc');
-        //bulkUpload()
-		
 	});
 }
