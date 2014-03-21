@@ -99,7 +99,7 @@ module.exports = {
                     name: path.basename(unparsedPhoto.path),
                     id: unparsedPhoto.id,
                     contentType: contentTypeForPath(unparsedPhoto.path),
-                    ext: path.extname(unparsedPhoto.path)
+                    ext: path.extname(unparsedPhoto.path).split(".").pop()
                 };
 
                 db.Photo.create(photoBody).then(function(photo) {
