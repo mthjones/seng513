@@ -1,3 +1,5 @@
 node_modules/
 .idea
 start-server.sh
+
+myLogFile.log

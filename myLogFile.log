@@ -50,3 +50,7 @@ GET /bulk/clear?password=1234 200 10 - 78 ms
 GET /bulk/clear?password=1234 200 10 - 76 ms
 GET /bulk/clear?password=1234 200 10 - 71 ms
 POST /bulk/users?password=1234 200 11 - 68 ms
+POST /users/create 302 39 - 39 ms
+GET /feed 200 - - 410 ms
+GET /feed 200 - - 14 ms
+POST /photos/create 500 22 - 7 ms
