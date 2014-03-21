@@ -2,6 +2,9 @@ var express = require('express'),
     config = require('./config/config'),
     db = require('./config/db'),
 	request = require('superagent'),
+    request2 = require('request'),
+    fs = require('fs'),
+    path = require('path'),
     _ =  require('lodash');
 
 var app = express();
@@ -111,14 +114,17 @@ function createUser(newUserName, newPassword, callbackFunction)
 {
     var user = {name: newUserName, username: newUserName, password: newPassword};
     var url = 'http://localhost:9000/users/create';
-    var userAgent = request.agent();
+//    var userAgent = request.agent();
+    var userAgent = request2.defaults({jar: request2.jar()});
+    userAgents.push(userAgent);
     function callback(response)
     {
-        userAgents.push(userAgent);
         callbackFunction();
     };
+
+    userAgent.post(url, callback).form(user);
     
-    userAgent.post(url).send(user).end(callback);
+//    userAgent.post(url).send(user).end(callback);
 }
 
 function bulkUpload(done){
@@ -153,10 +159,14 @@ function uploadPhotoFromUser(userAgent, done)
         var timeTaken = endD - startD;
         //var timeTaken = (process.hrtime()[1] - startTime)/1000000;
         timingArray.push(timeTaken);
+        if (err) console.log(err);
         done();
     };
    
-    userAgent.post(url).attach('photo', 'images/test2.png').send().end(callback);
+//    userAgent.post(url).attach('photo', 'images/test2.png', 'test2.png').end(callback);
+    var r = userAgent.post(url, callback);
+    var form = r.form();
+    form.append('photo', fs.createReadStream(path.join(__dirname, 'images', 'test2.png')));
 }
 
 function testMultipleUserUploadPhoto(numUsers, done)
