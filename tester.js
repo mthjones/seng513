@@ -115,7 +115,7 @@ function uploadPhotoFromUser(userAgent)
 {
     var url = 'http://localhost:9000/photos/create';
     
-    function callback(response)
+    function callback(err, response)
     {
         console.log("\n\nuploaded a photo\n\n");
     };
@@ -124,7 +124,7 @@ function uploadPhotoFromUser(userAgent)
         console.log("\n\nYO\n\n");
         console.log(error);
     }
-    userAgent.post(url).attach('testname', 'images/test2.png').on('error', handle).end(callback);
+    userAgent.post(url).attach('photo', 'images/test2.png').send().end(callback);
 }
 
 function testUserUploadPhoto()
