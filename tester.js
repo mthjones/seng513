@@ -38,28 +38,54 @@ db.sequelize.sync({force: config.envname === "development"}).complete(function (
     if (testVersion == "upload") {
         testMultipleUserUploadPhoto(concurrentRequests, function () {
         })
-    } else {
+    } else if(testVersion == "serve")
+    {
+        testServeImage(concurrentRequests, done);
+    }else {
         clear(done);
     }
 
     //testMultipleUserUploadPhoto(100, done);
 });
 
+function testServeImage(concurrentRequests, done)
+{
+    createUser("test","test", function()
+    {
+        uploadPhotoFromUser(userAgents[0], function()
+        {
+            var start = process.hrtime();   
+            var callback = _.after(concurrentRequests, function () {
+                var total = process.hrtime(start);
+                total = total[0] * 1000 + total[1] / 1000000;
+                output(concurrentRequests, total);
+                done();
+            });
+            
+            for(var i = 0; i < concurrentRequests; i++)
+            {
+                sendUserRequest(callback , userAgents[0]);
+            }
+        }, false);
+    });
+}
 
 function sendUserRequest(callDone, userAgent) {
-    var url = testVersion === "feed" ? "http://localhost:9000/feed" : "http://localhost:9000/"; //MAKE THIS AN IMAGE LINK
+    var url = testVersion === "feed" ? "http://localhost:9000/feed" : "http://localhost:9000/photos/1.png"; //MAKE THIS AN IMAGE LINK
     var currentCompleted = 0;
-
+    var startTime = process.hrtime();
     var callback = function(err, response) {
-        console.log("\ngot a feed\n");
+        //console.log("\ngot a feed\n");
+            
+        var timeTaken = process.hrtime(startTime);
+        timeTaken = timeTaken[0] * 1000 + timeTaken[1] / 1000000;
 
-        var timeTaken = (process.hrtime()[1] - startTime) / 1000000;
-        console.log("current is: " + process.hrtime()[1] + " and startTime was" + startTime + "timeTaken is " + timeTaken)
-        console.log(timeTaken);
+        //console.log("current is: " + process.hrtime()[1] + " and startTime was" + startTime + "timeTaken is " + timeTaken)
+        //console.log(timeTaken);
 
         timingArray.push(timeTaken);
         currentCompleted++;
-        console.log("Done # " + currentCompleted);
+        //console.log("Done # " + currentCompleted);
         callDone()
 
     };
@@ -68,8 +94,8 @@ function sendUserRequest(callDone, userAgent) {
         console.log(error);
     }
 
-    var startTime = process.hrtime()[1];
-    userAgent.get(url).send().end(callback);
+    //var startTime = process.hrtime()[1];
+    userAgent.get(url, callback);
 }
 
 function test() {
@@ -137,14 +163,15 @@ function bulkUpload(done) {
         .end(callback)
 }
 
-function uploadPhotoFromUser(userAgent, done) {
+function uploadPhotoFromUser(userAgent, done, logTime) {
     var url = 'http://localhost:9000/photos/create';
 
     var startTime = process.hrtime();
     var callback = function(err, response) {
         var timeTaken = process.hrtime(startTime);
         timeTaken = timeTaken[0] * 1000 + timeTaken[1] / 1000000;
-        timingArray.push(timeTaken);
+        if(logTime)
+            timingArray.push(timeTaken);
         if (err) console.log(err);
         done();
     };
@@ -167,7 +194,7 @@ function testMultipleUserUploadPhoto(numUsers, done) {
 
         var start = process.hrtime();
         for (var i = 0; i < numUsers; i++) {
-            uploadPhotoFromUser(userAgents[i], callback);
+            uploadPhotoFromUser(userAgents[i], callback, true);
         }
     });
 }
