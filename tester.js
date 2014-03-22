@@ -162,11 +162,13 @@ function testMultipleUserUploadPhoto(numUsers, done) {
     createNUsers(numUsers, function () {
         var callback = _.after(numUsers, function () {
             console.log("Done uploading all photos");
-            output(numUsers);
+            var total = process.hrtime(start);
+            total = total[0] * 1000 + total[1] / 1000000;
+            output(numUsers, total);
             done();
         });
 
-
+        var start = process.hrtime();
         for (var i = 0; i < numUsers; i++) {
             uploadPhotoFromUser(userAgents[i], callback);
         }
@@ -174,7 +176,7 @@ function testMultipleUserUploadPhoto(numUsers, done) {
 }
 
 
-function output(numUsers) {
+function output(numUsers, totalTime) {
     console.log(timingArray);
     var min = Math.round(Math.min.apply(null, timingArray)),
         max = Math.round(Math.max.apply(null, timingArray)),
@@ -182,12 +184,12 @@ function output(numUsers) {
             return a + b
         })),
         avg = Math.round(sum / timingArray.length),
-        through = Number((numUsers / (sum * 1000 * 1000)).toString().match(/^\d+(?:\.\d{0,2})?/));
+        through = (numUsers / totalTime * 1000).toPrecision(2);
 
     console.log("\n\n\tTiming Results (milliseconds)\n");
     console.log("Min\tMax\tMean\tTotal Time\t  Throughput (Requests/Second)");
     console.log("---------------------------------------------------------------------");
-    console.log(min + "  " + "   " + max + "     " + avg + "      " + sum + " \t\t\t  " + through + "\n\n")
+    console.log(min + "  " + "   " + max + "     " + avg + "      " + totalTime.toFixed() + " \t\t\t  " + through + "\n\n")
 }
 
 function clear(done) {
