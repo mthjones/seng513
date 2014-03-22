@@ -98,10 +98,19 @@ function sendUserRequest(callDone, userAgent) {
     userAgent.get(url, callback);
 }
 
-function test() {
+function test(concurrentRequests, done) {
     createNUsers(concurrentRequests, function () {
         //when callDone() gets called concurrentRequests times, done will be called
-        var respond = _.after(concurrentRequests, done);
+        
+        var start = process.hrtime();   
+        var respond = _.after(concurrentRequests, function () {
+            var total = process.hrtime(start);
+            total = total[0] * 1000 + total[1] / 1000000;
+            output(concurrentRequests, total);
+            done();
+        });
+                
+        //var respond = _.after(concurrentRequests, callback);
 
         for (var index = 0; index < userAgents.length; ++index) {
             sendUserRequest(respond, userAgents[index]);
@@ -147,7 +156,7 @@ function createUser(newUserName, newPassword, callbackFunction) {
 function bulkUpload(done) {
     function callback(res) {
         console.log("uploaded");
-        test(concurrentRequests);
+        test(concurrentRequests, done);
     }
 
 
