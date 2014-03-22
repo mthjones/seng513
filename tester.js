@@ -140,13 +140,10 @@ function bulkUpload(done) {
 function uploadPhotoFromUser(userAgent, done) {
     var url = 'http://localhost:9000/photos/create';
 
-    //var startTime = process.hrtime()[1];
-    var startD = new Date();
-
+    var startTime = process.hrtime();
     var callback = function(err, response) {
-        var endD = new Date();
-        var timeTaken = endD - startD;
-        //var timeTaken = (process.hrtime()[1] - startTime)/1000000;
+        var timeTaken = process.hrtime(startTime);
+        timeTaken = timeTaken[0] * 1000 + timeTaken[1] / 1000000;
         timingArray.push(timeTaken);
         if (err) console.log(err);
         done();
