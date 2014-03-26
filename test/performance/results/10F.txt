@@ -1,0 +1,208 @@
+# 10 followers: sandee.speller/Sandee
+#------------------------------------------------------------------------------
+# /feed
+#------------------------------------------------------------------------------
+# C=1
+#------------------------------------------------------------------------------
+Time taken for tests:   0.708 seconds
+Complete requests:      100
+Failed requests:        0
+Write errors:           0
+Total transferred:      146500 bytes
+HTML transferred:       126200 bytes
+Requests per second:    141.30 [#/sec] (mean)
+Time per request:       7.077 [ms] (mean)
+Time per request:       7.077 [ms] (mean, across all concurrent requests)
+Transfer rate:          202.15 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.0      0       0
+Processing:     4    7   5.2      6      53
+Waiting:        4    7   5.2      6      53
+Total:          4    7   5.2      6      53
+
+Percentage of the requests served within a certain time (ms)
+  50%      6
+  66%      7
+  75%      8
+  80%      8
+  90%      8
+  95%     10
+  98%     23
+  99%     53
+ 100%     53 (longest request)
+
+#------------------------------------------------------------------------------
+# C=10
+#------------------------------------------------------------------------------
+Time taken for tests:   0.439 seconds
+Complete requests:      100
+Failed requests:        0
+Write errors:           0
+Total transferred:      146500 bytes
+HTML transferred:       126200 bytes
+Requests per second:    227.80 [#/sec] (mean)
+Time per request:       43.897 [ms] (mean)
+Time per request:       4.390 [ms] (mean, across all concurrent requests)
+Transfer rate:          325.91 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.1      0       0
+Processing:    27   43   8.7     41      63
+Waiting:       27   43   8.7     40      63
+Total:         27   43   8.8     41      64
+
+Percentage of the requests served within a certain time (ms)
+  50%     41
+  66%     48
+  75%     52
+  80%     53
+  90%     57
+  95%     59
+  98%     62
+  99%     64
+ 100%     64 (longest request)
+
+#------------------------------------------------------------------------------
+# C=100
+#------------------------------------------------------------------------------
+Time taken for tests:   0.407 seconds
+Complete requests:      100
+Failed requests:        0
+Write errors:           0
+Total transferred:      146500 bytes
+HTML transferred:       126200 bytes
+Requests per second:    245.61 [#/sec] (mean)
+Time per request:       407.151 [ms] (mean)
+Time per request:       4.072 [ms] (mean, across all concurrent requests)
+Transfer rate:          351.38 [Kbytes/sec] received
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        2    4   0.8      4       5
+Processing:   302  352  29.8    354     400
+Waiting:      301  352  29.8    354     400
+Total:        306  356  29.1    357     403
+
+Percentage of the requests served within a certain time (ms)
+  50%    357
+  66%    371
+  75%    385
+  80%    389
+  90%    396
+  95%    400
+  98%    402
+  99%    403
+ 100%    403 (longest request)
+
+#------------------------------------------------------------------------------
+# /photos/create
+#------------------------------------------------------------------------------
+# C=1
+#------------------------------------------------------------------------------
+Time taken for tests:   4.088 seconds
+Complete requests:      100
+Failed requests:        0
+Write errors:           0
+Non-2xx responses:      100
+Total transferred:      26100 bytes
+Total body sent:        28128100
+HTML transferred:       3900 bytes
+Requests per second:    24.46 [#/sec] (mean)
+Time per request:       40.880 [ms] (mean)
+Time per request:       40.880 [ms] (mean, across all concurrent requests)
+Transfer rate:          6.23 [Kbytes/sec] received
+                        6719.32 kb/s sent
+                        6725.56 kb/s total
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.1      0       2
+Processing:    29   41   9.7     39     107
+Waiting:       29   40   9.7     39     106
+Total:         30   41   9.7     39     107
+
+Percentage of the requests served within a certain time (ms)
+  50%     39
+  66%     41
+  75%     45
+  80%     47
+  90%     53
+  95%     55
+  98%     56
+  99%    107
+ 100%    107 (longest request)
+
+#------------------------------------------------------------------------------
+# C=10
+#------------------------------------------------------------------------------
+Time taken for tests:   3.373 seconds
+Complete requests:      100
+Failed requests:        0
+Write errors:           0
+Non-2xx responses:      100
+Total transferred:      26100 bytes
+Total body sent:        28128100
+HTML transferred:       3900 bytes
+Requests per second:    29.65 [#/sec] (mean)
+Time per request:       337.304 [ms] (mean)
+Time per request:       33.730 [ms] (mean, across all concurrent requests)
+Transfer rate:          7.56 [Kbytes/sec] received
+                        8143.64 kb/s sent
+                        8151.19 kb/s total
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        0    0   0.2      0       1
+Processing:    91  335  89.1    340     446
+Waiting:       91  335  89.1    340     446
+Total:         92  336  89.0    340     446
+
+Percentage of the requests served within a certain time (ms)
+  50%    340
+  66%    388
+  75%    403
+  80%    410
+  90%    430
+  95%    434
+  98%    444
+  99%    446
+ 100%    446 (longest request)
+
+#------------------------------------------------------------------------------
+# C=100
+#------------------------------------------------------------------------------
+Time taken for tests:   0.878 seconds
+Complete requests:      100
+Failed requests:        0
+Write errors:           0
+Non-2xx responses:      100
+Total transferred:      26100 bytes
+Total body sent:        28128100
+HTML transferred:       3900 bytes
+Requests per second:    113.90 [#/sec] (mean)
+Time per request:       877.954 [ms] (mean)
+Time per request:       8.780 [ms] (mean, across all concurrent requests)
+Transfer rate:          29.03 [Kbytes/sec] received
+                        31287.34 kb/s sent
+                        31316.37 kb/s total
+
+Connection Times (ms)
+              min  mean[+/-sd] median   max
+Connect:        5   20  51.2      9     242
+Processing:   627  782  46.1    782     856
+Waiting:      626  779  48.0    780     853
+Total:        749  802  35.6    794     873
+
+Percentage of the requests served within a certain time (ms)
+  50%    794
+  66%    817
+  75%    831
+  80%    838
+  90%    857
+  95%    869
+  98%    872
+  99%    873
+ 100%    873 (longest request)

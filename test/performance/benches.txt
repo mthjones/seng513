@@ -1,0 +1,29 @@
+# Note that if you want to test concurrencies > 100, you'll need to increase your open socket limit with
+#   $ ulimit -n 10000
+
+# Recommend clearing out images/ directory after each photo creation bench
+# Assumptions:
+#   - No need to bench feed for # of followees. We update feed on upload, not on feed request.
+
+# Steps:
+# 1. Create bulk users
+# 2. For user with 0 followers, 1 follower, 10 followers, 100 followers
+    # a. Login as user, get their sid from cookies (chrome devtools->resources->cookies->localhost); export it to SID
+      export SID=...
+
+    # b. Testing 100 requests @ C concurrent requests to /feed
+      ab -n 100 -c 1 -C sid="${SID}" http://127.0.0.1:9000/feed
+      ab -n 100 -c 10 -C sid="${SID}" http://127.0.0.1:9000/feed
+      ab -n 100 -c 100 -C sid="${SID}" http://127.0.0.1:9000/feed
+
+    # c. Testing 100 requests @ C concurrent requests to /photos/create
+      ab -n 100 -c 1 -C sid="${SID}" -p test/performance/form-data.txt -T "multipart/form-data; boundary=1234567890" http://127.0.0.1:9000/photos/create
+      ab -n 100 -c 10 -C sid="${SID}" -p test/performance/form-data.txt -T "multipart/form-data; boundary=1234567890" http://127.0.0.1:9000/photos/create
+      ab -n 100 -c 100 -C sid="${SID}" -p test/performance/form-data.txt -T "multipart/form-data; boundary=1234567890" http://127.0.0.1:9000/photos/create
+
+# User data
+# - 100 followers: mohsen/Mohsen
+# - 10 followers: sandee.speller/Sandee
+# - 1 follower: jacquelynn.jorgensen/Jacquelynn
+# - 0 followers: octavia.overbay/Octavia
+
