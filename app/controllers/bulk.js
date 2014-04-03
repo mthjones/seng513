@@ -93,9 +93,9 @@ module.exports = {
                 return;
             }
 
-            var sendResponse = _.after(photos.length, responseFn);
-
             var idFix = photos.length && photos[0].id === 0 ? 1 : 0;
+
+            var uploadPromises = [];
 
             photos.forEach(function(unparsedPhoto) {
                 var photoBody = {
@@ -107,7 +107,7 @@ module.exports = {
                     ext: path.extname(unparsedPhoto.path).split(".").pop()
                 };
 
-                db.Photo.create(photoBody).then(function(photo) {
+                uploadPromises.push(db.Photo.create(photoBody).then(function(photo) {
                     return db.User.find(unparsedPhoto.user_id).then(function(user) {
                         return user.addPhoto(photo).then(function() {
                             return Promise.all([
@@ -115,18 +115,22 @@ module.exports = {
                                     return feed.addPhoto(photo);
                                 }),
                                 user.getFollower().then(function(followers) {
-                                    return followers.forEach(function(follower) {
-                                        return follower.getFeed().then(function(feed) {
+                                    var followerPromises = [];
+                                    followers.forEach(function(follower) {
+                                        followerPromises.push(follower.getFeed().then(function(feed) {
                                             return feed.addPhoto(photo);
-                                        });
+                                        }));
                                     });
+                                    return Promise.all(followerPromises);
                                 })
                             ]);
                         });
                     });
-                }).then(function() {
-                    sendResponse();
-                });
+                }));
+            });
+
+            Promise.all(uploadPromises).then(function() {
+                responseFn();
             });
         } else {
             res.status(401).send('Unauthorized to bulk add photos');
