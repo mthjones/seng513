@@ -1,4 +1,5 @@
-var moment = require('moment');
+var moment = require('moment'),
+    thumbnailer = require('../../lib/thumbnailer');
 
 module.exports = function(sequelize, DataTypes) {
     var Photo = sequelize.define('Photo', {
@@ -28,6 +29,16 @@ module.exports = function(sequelize, DataTypes) {
             },
             getThumbpath: function() {
                 return this.filepath + '.thumb';
+            },
+            getThumb: function() {
+                return thumbnailer.getThumb(this);
+            }
+        },
+        hooks: {
+            afterCreate: function(photo, fn) {
+                thumbnailer.createThumb(photo).then(function() {
+                    fn(null, photo);
+                });
             }
         }
     });

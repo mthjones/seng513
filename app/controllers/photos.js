@@ -2,8 +2,7 @@ var db = require('../../config/db'),
     fs = require('fs'),
     _ = require('lodash'),
     path = require('path'),
-    Promise = require('bluebird'),
-    thumbnailer = require('../../lib/thumbnailer');
+    Promise = require('bluebird');
 
 module.exports = {
     newForm: function(req, res, next) {
@@ -30,7 +29,7 @@ module.exports = {
             } else {
                 res.status(200);
                 res.setHeader('Content-Type', photo.contentType);
-                thumbnailer.getThumb(photo).then(function(thumb) {
+                photo.getThumb().then(function(thumb) {
                     res.send(thumb);
                 });
             }
@@ -40,25 +39,20 @@ module.exports = {
     create: function(req, res, next) {
         db.Photo.create({filepath: req.files.image.path, name: req.files.image.name, contentType: req.files.image.type, ext: path.extname(req.files.image.name).split('.').pop()}).then(function(photo) {
             return req.user.addPhoto(photo).then(function() {
-                return Promise.all([
-                    req.user.getFeed().then(function(feed) {
-                        return feed.addPhoto(photo);
-                    }),
-                    req.user.getFollower().then(function(followers) {
-                        var followerPromises = [];
-                        followers.forEach(function(follower) {
-                            followerPromises.push(follower.getFeed().then(function(feed) {
-                                return feed.addPhoto(photo);
-                            }));
-                        });
-                        return Promise.all(followerPromises);
-                    })
-                ]);
-            }).then(function() {
-                return photo;
+                req.user.getFeed().then(function(feed) {
+                    return feed.addPhoto(photo);
+                });
+                req.user.getFollower().then(function(followers) {
+                    var followerPromises = [];
+                    followers.forEach(function(follower) {
+                        followerPromises.push(follower.getFeed().then(function(feed) {
+                            return feed.addPhoto(photo);
+                        }));
+                    });
+                    return Promise.all(followerPromises);
+                });
             });
         })
-        .then(thumbnailer.createThumb)
         .then(function() {
             res.redirect(302, '/feed');
         }).catch(function(err) {
