@@ -18,7 +18,7 @@ var config = {
     },
     production: {
         envname: "production",
-        port: 8300,
+        port: 8302,
         root: path.normalize(path.join(__dirname, '..')),
         db: {
             adapter: 'mysql',
