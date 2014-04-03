@@ -22,15 +22,14 @@ module.exports = function(sequelize, DataTypes) {
             }
 
         },
-
         instanceMethods: {
-            timeAgo: function(){
-               return moment(this.createdAt).fromNow()
-
+            timeAgo: function() {
+               return moment(this.createdAt).fromNow();
+            },
+            getThumbpath: function() {
+                return this.filepath + '.thumb';
             }
         }
-
-
     });
 
     return Photo;
