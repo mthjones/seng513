@@ -30,10 +30,11 @@ module.exports = function(sequelize, DataTypes) {
                     photoCache.get(id.toString(), function(err, photo) {
                         if (err) reject(err);
                         if (Object.keys(photo).length === 0) {
-                            resolve(Photo.find(id).then(function(photo) {
-                                photoCache.set(photo.id.toString(), photo);
-                                return photo;
-                            }));
+                            Photo.find(id).then(function(photo) {
+                                photoCache.set(photo.id.toString(), photo, function(err, success) {
+                                    resolve(photo);
+                                });
+                            });
                         } else {
                             resolve(Promise.resolve(photo[id.toString()]));
                         }
