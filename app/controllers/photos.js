@@ -11,7 +11,7 @@ module.exports = {
     },
 
     view: function(req, res, next) {
-        db.Photo.find(req.params.id).then(function(photo) {
+        db.Photo.f(req.params.id).then(function(photo) {
             if (photo === null) {
                 res.status(404).render('404');
             } else {
@@ -23,7 +23,7 @@ module.exports = {
     },
 
     thumbnail: function(req, res, next) {
-        db.Photo.find(req.params.id).then(function(photo) {
+        db.Photo.f(req.params.id).then(function(photo) {
             if (photo === null) {
                 res.status(404).render('404');
             } else {
