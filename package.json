@@ -16,7 +16,8 @@
     "gm": "^1.14.2",
     "moment": "~2.5.1",
     "winston": "0.6.x",
-    "express-winston": "0.2.x"
+    "express-winston": "0.2.x",
+    "node-cache": "^0.4.1"
   },
   "devDependencies": {
     "mocha": "^1.17.1",
