@@ -32,47 +32,26 @@ module.exports = {
 
     usersUpload: function (req, res, next) {
         if (req.query.password === config.clear_password) {
-            var users = req.body;
-            var totalFollows = _.flatten(_.pluck(users, 'follows')).length;
-
-            var responseFn = function () {
-                res.status(200).send('Users added');
-            };
-
-            if (!users.length) {
-                responseFn();
-                return;
-            }
-
-            var sendResponse = _.after(totalFollows, responseFn);
-
-            var finishedUserCreation = _.after(users.length, function() {
-                users.forEach(function(user) {
-                    user.follows.forEach(function(followeeId) {
-                        db.User.find(followeeId).then(function(followee) {
-                            db.User.find(user.id).then(function(follower) {
-                                return followee.addFollower(follower);
-                            }).then(function() {
-                                sendResponse();
-                            });
-                        });
-                    });
-                });
+            var users = req.body.map(function(user) {
+                return { username: user.name, name: user.name, password: user.password, id: user.id, follows: user.follows };
             });
 
-            users.forEach(function(user) {
-                var userBody = {
-                    username: user.name,
-                    name: user.name,
-                    password: user.password,
-                    id: user.id
-                };
-                db.User.create(userBody).then(function(user) {
-                    db.Feed.create().then(function(feed) {
-                        user.setFeed(feed);
-                        finishedUserCreation();
-                    });
+            db.User.bulkCreate(users).then(function() {
+                var userPromises = [];
+                users.forEach(function(rawUser) {
+                    userPromises.push(db.User.find(rawUser.id).then(function(user) {
+                        var followerPromises = [];
+                        rawUser.follows.forEach(function(followeeId) {
+                            followerPromises.push(db.User.find(followeeId).then(function(followee) {
+                                return followee.addFollower(user);
+                            }));
+                        });
+                        return Promise.all(followerPromises);
+                    }));
                 });
+                return Promise.all(userPromises);
+            }).then(function () {
+                res.status(200).send('Users added');
             });
         } else {
             res.status(401).send('Unauthorized to bulk add users');
