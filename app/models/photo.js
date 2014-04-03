@@ -46,7 +46,7 @@ module.exports = function(sequelize, DataTypes) {
                return moment(this.createdAt).fromNow();
             },
             getThumbpath: function() {
-                return this.filepath + '.thumb';
+                return './images/thumbs/' + this.id + '.thumb.' + this.ext;
             },
             getThumb: function() {
                 return thumbnailer.getThumb(this);
