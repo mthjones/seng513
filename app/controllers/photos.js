@@ -24,24 +24,14 @@ module.exports = {
     },
 
     thumbnail: function(req, res, next) {
-        var respond = function(photo) {
-            res.status(200);
-            res.setHeader('Content-Type', photo.contentType);
-            fs.createReadStream(photo.filepath + '.thumb').pipe(res);
-        };
-
         db.Photo.find(req.params.id).then(function(photo) {
             if (photo === null) {
                 res.status(404).render('404');
             } else {
-                fs.exists(photo.filepath + '.thumb', function(exists) {
-                    if (exists) {
-                        respond(photo);
-                    } else {
-                        thumbnailer.createThumb(photo).then(function() {
-                            respond(photo);
-                        });
-                    }
+                res.status(200);
+                res.setHeader('Content-Type', photo.contentType);
+                thumbnailer.getThumb(photo).then(function(thumb) {
+                    res.send(thumb);
                 });
             }
         });
