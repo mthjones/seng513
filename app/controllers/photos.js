@@ -40,7 +40,7 @@ module.exports = {
     },
 
     create: function(req, res, next) {
-        db.Photo.create({filepath: req.files.photo.path, name: req.files.photo.name, contentType: req.files.photo.type, ext: path.extname(req.files.photo.name).split('.').pop()}).then(function(photo) {
+        db.Photo.create({filepath: req.files.image.path, name: req.files.image.name, contentType: req.files.image.type, ext: path.extname(req.files.image.name).split('.').pop()}).then(function(photo) {
             return req.user.addPhoto(photo).then(function() {
                 req.user.getFeed().then(function(feed) {
                     feed.addPhoto(photo);

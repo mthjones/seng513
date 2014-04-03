@@ -188,7 +188,7 @@ function uploadPhotoFromUser(userAgent, done, logTime) {
 //    userAgent.post(url).attach('photo', 'images/test2.png', 'test2.png').end(callback);
     var r = userAgent.post(url, callback);
     var form = r.form();
-    form.append('photo', fs.createReadStream(path.join(__dirname, 'images', 'test2.png')));
+    form.append('image', fs.createReadStream(path.join(__dirname, 'images', 'test2.png')));
 }
 
 function testMultipleUserUploadPhoto(numUsers, done) {
