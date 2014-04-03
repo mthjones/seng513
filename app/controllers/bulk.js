@@ -78,7 +78,7 @@ module.exports = {
                 photos.forEach(function(rawPhoto) {
                     photoPromises.push(db.Photo.find(rawPhoto.id).then(function(photo) {
                         return photo.getUser().then(function(user) {
-                            Promise.all([
+                            return Promise.all([
                                 user.getFeed().then(function(feed) {
                                     return feed.addPhoto(photo);
                                 }),
