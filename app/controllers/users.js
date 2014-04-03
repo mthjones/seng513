@@ -11,15 +11,11 @@ module.exports = {
 
     create: function(req, res, next) {
         db.User.create(req.body).success(function(user) {
-            db.Feed.create().then(function(feed) {
-                user.setFeed(feed).then(function() {
-                    req.login(user, function(err) {
-                        if (err) {
-                            return next(err);
-                        }
-                        return res.redirect(302, '/feed');
-                    });
-                });
+            req.login(user, function(err) {
+                if (err) {
+                    return next(err);
+                }
+                return res.redirect(302, '/feed');
             });
         }).error(function(err) {
             if (err.code === 'ER_DUP_ENTRY') {

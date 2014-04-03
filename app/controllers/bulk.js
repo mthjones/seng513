@@ -32,47 +32,26 @@ module.exports = {
 
     usersUpload: function (req, res, next) {
         if (req.query.password === config.clear_password) {
-            var users = req.body;
-            var totalFollows = _.flatten(_.pluck(users, 'follows')).length;
-
-            var responseFn = function () {
-                res.status(200).send('Users added');
-            };
-
-            if (!users.length) {
-                responseFn();
-                return;
-            }
-
-            var sendResponse = _.after(totalFollows, responseFn);
-
-            var finishedUserCreation = _.after(users.length, function() {
-                users.forEach(function(user) {
-                    user.follows.forEach(function(followeeId) {
-                        db.User.find(followeeId).then(function(followee) {
-                            db.User.find(user.id).then(function(follower) {
-                                return followee.addFollower(follower);
-                            }).then(function() {
-                                sendResponse();
-                            });
-                        });
-                    });
-                });
+            var users = req.body.map(function(user) {
+                return { username: user.name, name: user.name, password: user.password, id: user.id, follows: user.follows };
             });
 
-            users.forEach(function(user) {
-                var userBody = {
-                    username: user.name,
-                    name: user.name,
-                    password: user.password,
-                    id: user.id
-                };
-                db.User.create(userBody).then(function(user) {
-                    db.Feed.create().then(function(feed) {
-                        user.setFeed(feed);
-                        finishedUserCreation();
-                    });
+            db.User.bulkCreate(users).then(function() {
+                var userPromises = [];
+                users.forEach(function(rawUser) {
+                    userPromises.push(db.User.find(rawUser.id).then(function(user) {
+                        var followerPromises = [];
+                        rawUser.follows.forEach(function(followeeId) {
+                            followerPromises.push(db.User.find(followeeId).then(function(followee) {
+                                return followee.addFollower(user);
+                            }));
+                        });
+                        return Promise.all(followerPromises);
+                    }));
                 });
+                return Promise.all(userPromises);
+            }).then(function () {
+                res.status(200).send('Users added');
             });
         } else {
             res.status(401).send('Unauthorized to bulk add users');
@@ -81,35 +60,24 @@ module.exports = {
 
     streamsUpload: function (req, res, next) {
         if (req.query.password === config.clear_password) {
-            var photos = req.body;
+            var idFix = (req.body.length && (req.body[0].id === 0)) ? 1 : 0;
+            var photos = req.body.map(function(photo) {
+                return {
+                    createdAt: new Date(photo.timestamp),
+                    filepath: photo.path,
+                    name: path.basename(photo.path),
+                    id: photo.id + idFix,
+                    contentType: contentTypeForPath(photo.path),
+                    ext: path.extname(photo.path).split(".").pop(),
+                    UserId: photo.user_id
+                }
+            });
 
-            var responseFn = function () {
-                console.log('sending response');
-                res.status(200).send('Streams added');
-            };
-
-            if (!photos.length) {
-                responseFn();
-                return;
-            }
-
-            var idFix = photos.length && photos[0].id === 0 ? 1 : 0;
-
-            var uploadPromises = [];
-
-            photos.forEach(function(unparsedPhoto) {
-                var photoBody = {
-                    createdAt: new Date(unparsedPhoto.timestamp),
-                    filepath: unparsedPhoto.path,
-                    name: path.basename(unparsedPhoto.path),
-                    id: unparsedPhoto.id + idFix,
-                    contentType: contentTypeForPath(unparsedPhoto.path),
-                    ext: path.extname(unparsedPhoto.path).split(".").pop()
-                };
-
-                uploadPromises.push(db.Photo.create(photoBody).then(function(photo) {
-                    return db.User.find(unparsedPhoto.user_id).then(function(user) {
-                        return user.addPhoto(photo).then(function() {
+            db.Photo.bulkCreate(photos).then(function() {
+                var photoPromises = [];
+                photos.forEach(function(rawPhoto) {
+                    photoPromises.push(db.Photo.find(rawPhoto.id).then(function(photo) {
+                        return photo.getUser().then(function(user) {
                             return Promise.all([
                                 user.getFeed().then(function(feed) {
                                     return feed.addPhoto(photo);
@@ -125,12 +93,11 @@ module.exports = {
                                 })
                             ]);
                         });
-                    });
-                }));
-            });
-
-            Promise.all(uploadPromises).then(function() {
-                responseFn();
+                    }));
+                });
+                return Promise.all(photoPromises);
+            }).then(function() {
+                res.status(200).send('Streams added');
             });
         } else {
             res.status(401).send('Unauthorized to bulk add photos');
