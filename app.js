@@ -1,14 +1,24 @@
-var express = require('express'),
-    config = require('./config/config'),
-    db = require('./config/db');
+var cluster = require('cluster');
 
-var app = express();
+if (cluster.isMaster) {
+    var cpuCount = require('os').cpus().length;
 
-require('./config/passport');
-require('./config/express')(app);
-require('./config/routes')(app);
+    for (var i = 0; i < cpuCount; i++) {
+        cluster.fork();
+    }
+} else {
+    var express = require('express'),
+        config = require('./config/config'),
+        db = require('./config/db');
 
-db.sequelize.sync({force: false}).complete(function(err) {
-    if (err) throw err;
-    app.listen(config.port);
-});
+    var app = express();
+
+    require('./config/passport');
+    require('./config/express')(app);
+    require('./config/routes')(app);
+
+    db.sequelize.sync({force: false}).complete(function(err) {
+        if (err) throw err;
+        app.listen(config.port);
+    });
+}
