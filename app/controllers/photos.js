@@ -37,16 +37,24 @@ module.exports = {
     },
 
     create: function(req, res, next) {
+        var formProcessingTime = process.hrtime(req.startTime);
+        console.log('took ' + (formProcessingTime[0]*1000 + formProcessingTime[1]/1000000) + 'ms to parse form');
         db.Photo.create({filepath: req.files.image.path, name: req.files.image.name, contentType: req.files.image.type, ext: path.extname(req.files.image.name).split('.').pop()}).then(function(photo) {
+            var photoCreationTime = process.hrtime(req.startTime);
+            console.log('took ' + (photoCreationTime[0]*1000 + photoCreationTime[1]/1000000) + 'ms to create photo');
             return req.user.addPhoto(photo).then(function() {
                 req.user.updateFollowers(photo);
                 return req.user.getFeed().then(function(feed) {
-                    return feed.addPhoto(photo);
+                    return feed.addPhoto(photo).then(function() {
+                        var feedUpdateTime = process.hrtime(req.startTime);
+                        console.log('took ' + (feedUpdateTime[0]*1000 + feedUpdateTime[1]/1000000) + 'ms to update feed');
+                    });
                 });
             });
-        })
-        .then(function() {
+        }).then(function() {
             res.redirect(302, '/feed');
+            var totalTime = process.hrtime(req.startTime);
+            console.log('took ' + (totalTime[0]*1000 + totalTime[1]/1000000) + 'ms to send response');
         }).catch(function(err) {
             console.log(err);
             req.flash('error', 'Photo upload error');

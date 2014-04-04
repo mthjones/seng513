@@ -11,6 +11,11 @@ var ensureAuthed = function(req, res, next) {
     if (!req.isAuthenticated()) res.redirect(302, '/sessions/new');
     else next();
 };
+
+var timer = function(req, res, next) {
+    req.startTime = process.hrtime();
+    next();
+};
     
 module.exports = function(app) {
     app.get('/', function(req, res, next) {
