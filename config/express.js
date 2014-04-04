@@ -5,7 +5,8 @@ var express = require('express'),
     config = require('./config'),
     fs = require('fs'),
     winston = require('winston'),
-    expressWinston = require('express-winston');
+    expressWinston = require('express-winston'),
+    ClusterStore = require('strong-cluster-connect-store')(express);
 
 var logFile = fs.createWriteStream('./myLogFile.log', {flags: 'a'});
 
@@ -24,7 +25,7 @@ module.exports = function(app) {
         app.use(express.urlencoded());
         app.use(express.json());
         app.use(express.methodOverride());
-        app.use(express.session({secret: 'super-secret', key: 'sid'}));
+        app.use(express.session({store: new ClusterStore(), secret: 'super-secret', key: 'sid'}));
         app.use(flash());
         app.use(passport.initialize());
         app.use(passport.session());
