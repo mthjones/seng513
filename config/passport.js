@@ -3,8 +3,8 @@ var passport = require('passport'),
     db = require('./db');
 
 passport.use(new LocalStrategy(function(username, password, done) {
-    db.User.find({where: {username: username}})
-        .success(function(user) {
+    db.User.f({where: {username: username}})
+        .then(function(user) {
             if (!user) {
                 return done(null, false, {message: 'Incorrect username'});
             }
@@ -13,7 +13,7 @@ passport.use(new LocalStrategy(function(username, password, done) {
             }
             return done(null, user);
         })
-        .error(done);
+        .catch(done);
 }));
 
 passport.serializeUser(function(user, done) {
@@ -21,11 +21,9 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-    db.User.find(id)
-        .success(function(user) {
-            done(null, user);
-        })
-        .error(function(err) {
-            done(err, null);
-        });
+    db.User.f(id).then(function(user) {
+        done(null, user);
+    }).catch(function(err) {
+        done(err, null);
+    });
 });

@@ -39,7 +39,7 @@ module.exports = {
             db.User.bulkCreate(users).then(function() {
                 var userPromises = [];
                 users.forEach(function(rawUser) {
-                    userPromises.push(db.User.find(rawUser.id).then(function(user) {
+                    userPromises.push(db.User.f(rawUser.id).then(function(user) {
                         var followerPromises = [];
                         rawUser.follows.forEach(function(followeeId) {
                             followerPromises.push(db.User.find(followeeId).then(function(followee) {

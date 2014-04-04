@@ -39,7 +39,7 @@ module.exports = {
             res.render('users/view', {user: user, photos: photos, nextPage: page + 1, following: isFollowing, showFollow: showFollow, showMore: showMore });
         };
 
-        db.User.find(req.params.id).then(function(user) {
+        db.User.f(req.params.id).then(function(user) {
             if (user !== null) {
                 user.hasFollower(req.user).then(function(isFollowing) {
                     user.getPhotoes().then(function(allPhotos) {
@@ -73,7 +73,7 @@ module.exports = {
 
 
     follow: function(req, res, next) {
-        db.User.find(req.params.id).then(function(followee) {
+        db.User.f(req.params.id).then(function(followee) {
             if (followee === null) {
                 res.status(404);
                 res.render('404');
@@ -86,7 +86,7 @@ module.exports = {
     },
 
     unfollow: function(req, res, next) {
-        db.User.find(req.params.id).then(function(followee) {
+        db.User.f(req.params.id).then(function(followee) {
             if (followee === null) {
                 res.status(404).render('404');
             } else {
