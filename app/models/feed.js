@@ -40,11 +40,11 @@ module.exports = function(sequelize, DataTypes) {
             }
         },
         hooks: {
-            afterUpdate: function(feed, fn) {
-                feedCache.invalidateForUser(feed.UserId, function(err, success) {
-                    fn(null, feed);
-                });
-            }
+//            afterUpdate: function(feed, fn) {
+//                feedCache.invalidateForUser(feed.UserId, function(err, success) {
+//                    fn(null, feed);
+//                });
+//            }
         }
     });
 
