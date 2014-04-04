@@ -62,13 +62,13 @@ module.exports = function(sequelize, DataTypes) {
                 });
             },
             afterBulkCreate: function(photos, fields, fn) {
-//                async.forEachLimit(photos, 32, function(photo, cb) {
-//                    thumbnailer.createThumb(photo).then(function() {
-//                        cb();
-//                    });
-//                }, function() {
-//                    fn();
-//                });
+                async.forEachLimit(photos, 32, function(photo, cb) {
+                    thumbnailer.createThumb(photo).then(function() {
+                        cb();
+                    });
+                }, function() {
+                    fn();
+                });
                 fn();
             },
             afterUpdate: function(photo, fn) {
