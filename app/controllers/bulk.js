@@ -62,6 +62,7 @@ module.exports = {
 
     streamsUpload: function (req, res, next) {
         if (req.query.password === config.clear_password) {
+            var start = process.hrtime();
             var idFix = (req.body.length && (req.body[0].id === 0)) ? 1 : 0;
             var photos = req.body.map(function(photo) {
                 return {
@@ -78,8 +79,8 @@ module.exports = {
             db.Photo.bulkCreate(photos).then(function() {
                 var photoPromises = [];
                 photos.forEach(function(rawPhoto) {
-                    photoPromises.push(db.Photo.find(rawPhoto.id).then(function(photo) {
-                        return photo.getUser().then(function(user) {
+                    photoPromises.push(db.Photo.f(rawPhoto.id).then(function(photo) {
+                        return db.User.f(photo.UserId).then(function(user) {
                             return Promise.all([
                                 user.getFeed().then(function(feed) {
                                     return feed.addPhoto(photo);
@@ -99,7 +100,8 @@ module.exports = {
                 });
                 return Promise.all(photoPromises);
             }).then(function() {
-                res.status(200).send('Streams added');
+                var end = process.hrtime(start);
+                res.status(200).send('Streams added in ' + (end[0]*1000 + end[1]/1000000) + 'ms');
             });
         } else {
             res.status(401).send('Unauthorized to bulk add photos');
