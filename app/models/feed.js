@@ -1,3 +1,6 @@
+var NodeCache = require('node-cache'),
+    feedViewCache = new NodeCache();
+
 module.exports = function(sequelize, DataTypes) {
     var Feed = sequelize.define('Feed', {
 
@@ -6,6 +9,9 @@ module.exports = function(sequelize, DataTypes) {
             associate: function(models) {
                 Feed.belongsTo(models.User);
                 Feed.hasMany(models.Photo);
+            },
+            getFeedViewCache: function() {
+                return feedViewCache;
             }
         }
     });
