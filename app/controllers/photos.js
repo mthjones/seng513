@@ -39,14 +39,15 @@ module.exports = {
     create: function(req, res, next) {
         db.Photo.create({filepath: req.files.image.path, name: req.files.image.name, contentType: req.files.image.type, ext: path.extname(req.files.image.name).split('.').pop()}).then(function(photo) {
             return req.user.addPhoto(photo).then(function() {
-                req.user.updateFollowers(photo);
                 return req.user.getFeed().then(function(feed) {
                     return feed.addPhoto(photo);
                 });
+            }).then(function() {
+                return photo;
             });
-        })
-        .then(function() {
+        }).then(function(photo) {
             res.redirect(302, '/feed');
+            req.user.updateFollowers(photo);
         }).catch(function(err) {
             console.log(err);
             req.flash('error', 'Photo upload error');
