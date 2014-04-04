@@ -81,20 +81,10 @@ module.exports = {
                 photos.forEach(function(rawPhoto) {
                     photoPromises.push(db.Photo.f(rawPhoto.id).then(function(photo) {
                         return db.User.f(photo.UserId).then(function(user) {
-                            return Promise.all([
-                                user.getFeed().then(function(feed) {
-                                    return feed.addPhoto(photo);
-                                }),
-                                user.getFollower().then(function(followers) {
-                                    var followerPromises = [];
-                                    followers.forEach(function(follower) {
-                                        followerPromises.push(follower.getFeed().then(function(feed) {
-                                            return feed.addPhoto(photo);
-                                        }));
-                                    });
-                                    return Promise.all(followerPromises);
-                                })
-                            ]);
+                            user.updateFollowers(photo);
+                            return user.getFeed().then(function(feed) {
+                                return feed.addPhoto(photo);
+                            });
                         });
                     }));
                 });

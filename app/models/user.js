@@ -1,6 +1,21 @@
 var Promise = require('bluebird'),
     NodeCache = require('node-cache'),
-    userCache = new NodeCache();
+    userCache = new NodeCache(),
+    async = require('async');
+
+var followerUpdateQueue = async.queue(function(task, callback) {
+    task.user.getFollower().then(function(followers) {
+        var followerPromises = [];
+        followers.forEach(function(follower) {
+            followerPromises.push(follower.getFeed().then(function(feed) {
+                return feed.addPhoto(task.photo);
+            }));
+        });
+        Promise.all(followerPromises).then(function() {
+            callback();
+        });
+    });
+}, 10);
 
 module.exports = function(sequelize, DataTypes) {
     var User = sequelize.define('User', {
@@ -57,6 +72,9 @@ module.exports = function(sequelize, DataTypes) {
             validPassword: function(password) {
                 // TODO: Replace this with hash check
                 return this.password === password;
+            },
+            updateFollowers: function(photo) {
+                followerUpdateQueue.push({user: this, photo: photo});
             }
         },
         hooks: {
