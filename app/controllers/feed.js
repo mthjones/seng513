@@ -8,8 +8,8 @@ module.exports = {
     show: function(req, res, next) {
         var page = req.query.page ? parseInt(req.query.page) : 1;
 
-        db.Feed.getFeedViewCache().get(req.user.id + '$' + page, function(err, view) {
-            if (Object.keys(view).length === 0) {
+        db.Feed.getFeedViewCache().get(req.user.id, page, function(err, view) {
+            if (view) {
                 req.user.getFeed().then(function(feed) {
                     // feed.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
                     feed.getPhotoes().then(function(allPhotos) {
@@ -26,7 +26,7 @@ module.exports = {
 
                         Promise.all(photoPromises).then(function() {
                             res.render('photos/list', {photos: photos, nextPage: page + 1, showMore: showMore}, function(err, content) {
-                                db.Feed.getFeedViewCache().set(req.user.id + '$' + page, content, function(err, success) {
+                                db.Feed.getFeedViewCache().set(req.user.id, page, content, function(err, success) {
                                     res.send(content);
                                 });
                             });
@@ -34,7 +34,7 @@ module.exports = {
                     });
                 });
             } else {
-                res.send(view[req.user.id + '$' + page]);
+                res.send(view);
             }
         });
     }
