@@ -1,6 +1,7 @@
 var moment = require('moment'),
     thumbnailer = require('../../lib/thumbnailer'),
     Promise = require('bluebird'),
+    async = require('async'),
     NodeCache = require('node-cache'),
     photoCache = new NodeCache();
 
@@ -59,6 +60,16 @@ module.exports = function(sequelize, DataTypes) {
                 thumbnailer.createThumb(photo).then(function() {
                     fn(null, photo);
                 });
+            },
+            afterBulkCreate: function(photos, fields, fn) {
+//                async.forEachLimit(photos, 32, function(photo, cb) {
+//                    thumbnailer.createThumb(photo).then(function() {
+//                        cb();
+//                    });
+//                }, function() {
+//                    fn();
+//                });
+                fn();
             },
             afterUpdate: function(photo, fn) {
                 photoCache.set(photo.id.toString(), photo);
