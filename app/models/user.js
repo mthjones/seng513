@@ -42,7 +42,7 @@ module.exports = function(sequelize, DataTypes) {
                         if (err) reject(err);
                         if (Object.keys(user).length === 0) {
                             User.find(id).then(function(user) {
-                                userCache.set(user.id.toString(), user, function(err, success) {
+                                userCache.set(id.toString(), user, function(err, success) {
                                     resolve(user);
                                 });
                             });
