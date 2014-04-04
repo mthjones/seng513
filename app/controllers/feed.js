@@ -8,8 +8,8 @@ module.exports = {
     show: function(req, res, next) {
         var page = req.query.page ? parseInt(req.query.page) : 1;
 
-        db.Feed.getFeedViewCache().get(req.user.id, page, function(err, view) {
-            if (view) {
+//        db.Feed.getFeedViewCache().get(req.user.id, page, function(err, view) {
+//            if (view) {
                 req.user.getFeed().then(function(feed) {
                     // feed.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
                     feed.getPhotoes().then(function(allPhotos) {
@@ -33,9 +33,9 @@ module.exports = {
                         });
                     });
                 });
-            } else {
-                res.send(view);
-            }
-        });
+//            } else {
+//                res.send(view);
+//            }
+//        });
     }
 };
