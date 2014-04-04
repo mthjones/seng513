@@ -4,6 +4,7 @@ var db = require('./db'),
     feedCtrl = require('../app/controllers/feed'),
     photosCtrl = require('../app/controllers/photos'),
     bulkCtrl = require('../app/controllers/bulk'),
+    express = require('express'),
     config = require('./config');
 
 var ensureAuthed = function(req, res, next) {
@@ -33,7 +34,7 @@ module.exports = function(app) {
     app.get('/feed', ensureAuthed, feedCtrl.show);
 
     app.get('/photos/new', ensureAuthed, photosCtrl.newForm);
-    app.post('/photos/create', ensureAuthed, photosCtrl.create);
+    app.post('/photos/create', ensureAuthed, timer, express.multipart({uploadDir: './images'}), photosCtrl.create);
     app.get('/photos/thumbnail/:id.:ext', ensureAuthed, photosCtrl.thumbnail);
     app.get('/photos/:id.:ext', ensureAuthed, photosCtrl.view);
 };
