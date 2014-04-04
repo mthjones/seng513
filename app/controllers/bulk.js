@@ -32,6 +32,7 @@ module.exports = {
 
     usersUpload: function (req, res, next) {
         if (req.query.password === config.clear_password) {
+            var start = process.hrtime();
             var users = req.body.map(function(user) {
                 return { username: user.name, name: user.name, password: user.password, id: user.id, follows: user.follows };
             });
@@ -42,7 +43,7 @@ module.exports = {
                     userPromises.push(db.User.f(rawUser.id).then(function(user) {
                         var followerPromises = [];
                         rawUser.follows.forEach(function(followeeId) {
-                            followerPromises.push(db.User.find(followeeId).then(function(followee) {
+                            followerPromises.push(db.User.f(followeeId).then(function(followee) {
                                 return followee.addFollower(user);
                             }));
                         });
@@ -51,7 +52,8 @@ module.exports = {
                 });
                 return Promise.all(userPromises);
             }).then(function () {
-                res.status(200).send('Users added');
+                var end = process.hrtime(start);
+                res.status(200).send('Users added in ' + (end[0]*1000 + end[1]/1000000) + 'ms');
             });
         } else {
             res.status(401).send('Unauthorized to bulk add users');
