@@ -8,7 +8,7 @@ require('./config/passport');
 require('./config/express')(app);
 require('./config/routes')(app);
 
-db.sequelize.sync({force: config.envname === "development"}).complete(function(err) {
+db.sequelize.sync({force: false}).complete(function(err) {
     if (err) throw err;
     app.listen(config.port);
 });
