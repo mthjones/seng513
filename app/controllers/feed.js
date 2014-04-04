@@ -1,35 +1,29 @@
 var db = require('../../config/db'),
-    _ =  require('lodash');
+    _ =  require('lodash'),
+    Promise = require('bluebird');
 
 const pageSize = 30;
 
 module.exports = {
     show: function(req, res, next) {
         var page = req.query.page ? parseInt(req.query.page) : 1;
-        var render = function (photos, showMore) {
-            res.render('photos/list', {photos: photos, nextPage: page + 1, showMore: showMore});
-        };
 
         req.user.getFeed().then(function(feed) {
-            // Ugh.
+            // feed.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
             feed.getPhotoes().then(function(allPhotos) {
-                return allPhotos.length;
-            }).then(function(count) {
-                feed.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
-                    var respond = _.after(photos.length, render);
+                var offset = (page - 1) * pageSize;
+                var photos = _.sortBy(allPhotos, 'createdAt').reverse().slice(offset, offset + pageSize);
+                var showMore = (pageSize * (page - 1)) + photos.length < allPhotos.length;
 
-                    if (photos.length === 0) {
-                        render([]);
-                        return;
-                    }
+                var photoPromises = [];
+                photos.forEach(function(photo) {
+                    photoPromises.push(photo.getUser().then(function(user) {
+                        photo.user = user;
+                    }));
+                });
 
-                    photos.forEach(function(photo) {
-                        photo.getUser().then(function(user) {
-                            photo.user = user;
-                            var showMore = (pageSize * (page - 1)) + photos.length < count;
-                            respond(photos, showMore);
-                        });
-                    });
+                Promise.all(photoPromises).then(function() {
+                    res.render('photos/list', {photos: photos, nextPage: page + 1, showMore: showMore});
                 });
             });
         });
