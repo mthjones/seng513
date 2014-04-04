@@ -8,34 +8,18 @@ module.exports = {
     show: function(req, res, next) {
         var page = req.query.page ? parseInt(req.query.page) : 1;
 
-//        db.Feed.getFeedViewCache().get(req.user.id, page, function(err, view) {
-//            if (view) {
-                req.user.getFeed().then(function(feed) {
-                    // feed.getPhotoes({offset: (page - 1) * pageSize, limit: pageSize, order: [['Photoes.createdAt', 'DESC']]}).then(function(photos) {
-                    feed.getPhotoes().then(function(allPhotos) {
-                        var offset = (page - 1) * pageSize;
-                        var photos = _.sortBy(allPhotos, ['createdAt', 'id']).reverse().slice(offset, offset + pageSize);
-                        var showMore = (pageSize * (page - 1)) + photos.length < allPhotos.length;
-
-                        var photoPromises = [];
-                        photos.forEach(function(photo) {
-                            photoPromises.push(photo.getUser().then(function(user) {
-                                photo.user = user;
-                            }));
-                        });
-
-                        Promise.all(photoPromises).then(function() {
-                            res.render('photos/list', {photos: photos, nextPage: page + 1, showMore: showMore}, function(err, content) {
-//                                db.Feed.getFeedViewCache().set(req.user.id, page, content, function(err, success) {
-                                    res.send(content);
-//                                });
-                            });
-                        });
-                    });
+        req.user.getFeed().then(function(feed) {
+            db.sequelize.query("SELECT p.*, u.username FROM Photoes p INNER JOIN FeedsPhotoes fp ON fp.PhotoId = p.id INNER JOIN Users u ON p.UserId = u.id WHERE fp.FeedId = ?", db.Photo, {}, [feed.id]).then(function(allPhotos) {
+                var offset = (page - 1) * pageSize;
+                var photos = _.sortBy(allPhotos, ['createdAt', 'id']).reverse().slice(offset, offset + pageSize);
+                photos.map(function(photo) {
+                    photo.user = {id: photo.UserId, name: photo.dataValues.username};
+                    return photo;
                 });
-//            } else {
-//                res.send(view);
-//            }
-//        });
+                var showMore = (pageSize * (page - 1)) + photos.length < allPhotos.length;
+
+                res.render('photos/list', {photos: photos, nextPage: page + 1, showMore: showMore});
+            });
+        });
     }
 };
