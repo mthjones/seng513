@@ -2,6 +2,7 @@ var cluster = require('cluster');
 
 require('strong-cluster-connect-store').setup();
 
+// Adapted from http://rowanmanning.com/posts/node-cluster-and-express/
 if (cluster.isMaster) {
     var cpuCount = require('os').cpus().length;
 
@@ -24,3 +25,7 @@ if (cluster.isMaster) {
         app.listen(config.port);
     });
 }
+
+cluster.on('exit', function(worker) {
+    cluster.fork();
+});
