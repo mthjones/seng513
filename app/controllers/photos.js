@@ -39,18 +39,20 @@ module.exports = {
     create: function(req, res, next) {
         db.Photo.create({filepath: req.files.image.path, name: req.files.image.name, contentType: req.files.image.type, ext: path.extname(req.files.image.name).split('.').pop()}).then(function(photo) {
             return req.user.addPhoto(photo).then(function() {
-                req.user.getFeed().then(function(feed) {
-                    return feed.addPhoto(photo);
-                });
-                req.user.getFollower().then(function(followers) {
-                    var followerPromises = [];
-                    followers.forEach(function(follower) {
-                        followerPromises.push(follower.getFeed().then(function(feed) {
-                            return feed.addPhoto(photo);
-                        }));
-                    });
-                    return Promise.all(followerPromises);
-                });
+                return Promise.all([
+                    req.user.getFeed().then(function(feed) {
+                        return feed.addPhoto(photo);
+                    }),
+                    req.user.getFollower().then(function(followers) {
+                        var followerPromises = [];
+                        followers.forEach(function(follower) {
+                            followerPromises.push(follower.getFeed().then(function(feed) {
+                                return feed.addPhoto(photo);
+                            }));
+                        });
+                        return Promise.all(followerPromises);
+                    })
+                ]);
             });
         })
         .then(function() {
