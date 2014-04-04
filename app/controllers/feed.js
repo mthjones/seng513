@@ -26,9 +26,9 @@ module.exports = {
 
                         Promise.all(photoPromises).then(function() {
                             res.render('photos/list', {photos: photos, nextPage: page + 1, showMore: showMore}, function(err, content) {
-                                db.Feed.getFeedViewCache().set(req.user.id, page, content, function(err, success) {
+//                                db.Feed.getFeedViewCache().set(req.user.id, page, content, function(err, success) {
                                     res.send(content);
-                                });
+//                                });
                             });
                         });
                     });
