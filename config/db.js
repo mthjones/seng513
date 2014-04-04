@@ -8,7 +8,9 @@ var sequelize = new Sequelize(config.db.name, config.db.username, config.db.pass
     dialect: config.db.adapter,
     host: config.db.host || 'localhost',
     port: config.db.port,
-    logging: false
+    logging: false,
+    pool: { maxConnections: 2, maxIdleTime: 10 },
+    native: true
 });
 
 var db = {};
