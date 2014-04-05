@@ -44,11 +44,8 @@ module.exports = {
             res.redirect(302, '/photos/new');
         } else {
             db.Photo.create({filepath: req.files.image.path, name: req.files.image.name, contentType: req.files.image.type, ext: path.extname(req.files.image.name).split('.').pop()}).then(function(photo) {
-                req.user.getFeed().then(function(feed) {
-                    return feed.addPhoto(photo);
-                }).then(function() {
-                    res.redirect(302, '/feed');
-                });
+                res.redirect(302, '/feed');
+                req.user.getCachedFeed().addPhoto(photo);
                 return req.user.addPhoto(photo);
             }).then(function(photo) {
                 photo.createThumb();

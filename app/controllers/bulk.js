@@ -44,6 +44,7 @@ module.exports = {
                         var followerPromises = [];
                         rawUser.follows.forEach(function(followeeId) {
                             followerPromises.push(db.User.f(followeeId).then(function(followee) {
+                                user.invalidateFollowers();
                                 return followee.addFollower(user);
                             }));
                         });
@@ -82,9 +83,7 @@ module.exports = {
                     photoPromises.push(db.Photo.f(rawPhoto.id).then(function(photo) {
                         return db.User.f(photo.UserId).then(function(user) {
                             user.updateFollowers(photo);
-                            return user.getFeed().then(function(feed) {
-                                return feed.addPhoto(photo);
-                            });
+                            return user.getCachedFeed().addPhoto(photo);
                         });
                     }));
                 });

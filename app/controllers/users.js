@@ -78,6 +78,7 @@ module.exports = {
                 res.status(404);
                 res.render('404');
             } else {
+                followee.invalidateFollowers();
                 followee.addFollower(req.user).then(function() {
                     res.redirect(302, '/feed');
                 });
@@ -90,6 +91,7 @@ module.exports = {
             if (followee === null) {
                 res.status(404).render('404');
             } else {
+                followee.invalidateFollowers();
                 followee.removeFollower(req.user).then(function() {
                     res.redirect(302, '/feed');
                 });
