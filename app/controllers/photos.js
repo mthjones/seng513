@@ -46,8 +46,7 @@ module.exports = {
             db.Photo.create({filepath: req.files.image.path, name: req.files.image.name, contentType: req.files.image.type, ext: path.extname(req.files.image.name).split('.').pop()}).then(function(photo) {
                 res.redirect(302, '/feed');
                 req.user.getCachedFeed().addPhoto(photo);
-                return req.user.addPhoto(photo);
-            }).then(function(photo) {
+                req.user.addPhoto(photo);
                 photo.createThumb();
                 req.user.updateFollowers(photo);
             });
