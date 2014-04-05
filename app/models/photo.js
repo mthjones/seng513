@@ -61,20 +61,6 @@ module.exports = function(sequelize, DataTypes) {
             afterCreate: function(photo, fn) {
                 photoCache.set(photo.id.toString(), photo);
                 fn(null, photo);
-            },
-            afterBulkCreate: function(photos, fields, fn) {
-                async.forEachLimit(photos, 32, function(photo, cb) {
-                    thumbnailer.createThumb(photo).then(function() {
-                        cb();
-                    });
-                }, function() {
-                    fn();
-                });
-                fn();
-            },
-            afterUpdate: function(photo, fn) {
-                photoCache.set(photo.id.toString(), photo);
-                fn(null, photo);
             }
         }
     });
