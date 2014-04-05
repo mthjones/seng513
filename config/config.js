@@ -8,7 +8,7 @@ var config = {
         port: 9000,
         root: path.normalize(path.join(__dirname, '..')),
         db: {
-            adapter: 'mysql',
+            adapter: 'mariadb',
             name: 'snapgram_dev',
             port: 3306,
             username: 'root',
@@ -21,7 +21,7 @@ var config = {
         port: 8302,
         root: path.normalize(path.join(__dirname, '..')),
         db: {
-            adapter: 'mysql',
+            adapter: 'mariadb',
             name: process.env.SNAPGRAM_DB,
             host: 'web2.cpsc.ucalgary.ca',
             port: 3306,
