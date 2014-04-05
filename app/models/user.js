@@ -14,7 +14,7 @@ var followerUpdateQueue = async.queue(function(task, callback) {
             callback();
         });
     });
-}, 10);
+}, 64);
 
 module.exports = function(sequelize, DataTypes) {
     var User = sequelize.define('User', {
