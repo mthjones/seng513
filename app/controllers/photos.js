@@ -4,6 +4,8 @@ var db = require('../../config/db'),
     path = require('path'),
     Promise = require('bluebird');
 
+const imageTypes = ['image/gif', 'image/jpeg', 'image/pjpeg', 'image/png', 'image/svg+xml'];
+
 module.exports = {
     newForm: function(req, res, next) {
         res.locals = { error: req.flash('error') };
@@ -37,18 +39,21 @@ module.exports = {
     },
 
     create: function(req, res, next) {
-        db.Photo.create({filepath: req.files.image.path, name: req.files.image.name, contentType: req.files.image.type, ext: path.extname(req.files.image.name).split('.').pop()}).then(function(photo) {
-            req.user.getFeed().then(function(feed) {
-                return feed.addPhoto(photo);
-            });
-            return req.user.addPhoto(photo);
-        }).then(function(photo) {
-            res.redirect(302, '/feed');
-            req.user.updateFollowers(photo);
-        }).catch(function(err) {
-            console.log(err);
+        if (!_.contains(imageTypes, req.files.image.type)) {
             req.flash('error', 'Photo upload error');
             res.redirect(302, '/photos/new');
-        });
+        } else {
+            db.Photo.create({filepath: req.files.image.path, name: req.files.image.name, contentType: req.files.image.type, ext: path.extname(req.files.image.name).split('.').pop()}).then(function(photo) {
+                req.user.getFeed().then(function(feed) {
+                    return feed.addPhoto(photo);
+                }).then(function() {
+                    res.redirect(302, '/feed');
+                });
+                return req.user.addPhoto(photo);
+            }).then(function(photo) {
+                photo.createThumb();
+                req.user.updateFollowers(photo);
+            });
+        }
     }
 };

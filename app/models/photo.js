@@ -52,14 +52,15 @@ module.exports = function(sequelize, DataTypes) {
             },
             getThumb: function() {
                 return thumbnailer.getThumb(this);
+            },
+            createThumb: function() {
+                return thumbnailer.createThumb(this);
             }
         },
         hooks: {
             afterCreate: function(photo, fn) {
                 photoCache.set(photo.id.toString(), photo);
-                thumbnailer.createThumb(photo).then(function() {
-                    fn(null, photo);
-                });
+                fn(null, photo);
             },
             afterBulkCreate: function(photos, fields, fn) {
                 async.forEachLimit(photos, 32, function(photo, cb) {
