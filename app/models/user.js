@@ -8,6 +8,7 @@ var followerUpdateQueue = async.queue(function(task, callback) {
     task.user.getFollowers().then(function(followers) {
         var followerPromises = [];
         followers.forEach(function(follower) {
+            follower.getCachedFeed().invalidatePhotos();
             followerPromises.push(follower.getCachedFeed().addPhoto(task.photo));
         });
         Promise.all(followerPromises).then(function() {

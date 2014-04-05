@@ -39,6 +39,20 @@ module.exports = function(sequelize, DataTypes) {
                 return feedCache;
             }
         },
+        instanceMethods: {
+            invalidatePhotos: function() {
+                delete this.__photos;
+            },
+            getCachedPhotos: function() {
+                return this.__photos;
+            },
+            setPhotoCache: function(photos) {
+                this.__photos = photos;
+            },
+            isPhotoCacheValid: function() {
+                return !!this.__photos;
+            }
+        },
         hooks: {
 //            afterUpdate: function(feed, fn) {
 //                feedCache.invalidateForUser(feed.UserId, function(err, success) {
