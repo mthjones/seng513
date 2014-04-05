@@ -8,18 +8,7 @@ module.exports = {
     show: function(req, res, next) {
         var page = req.query.page ? parseInt(req.query.page) : 1;
 
-        var getCachePhotos = function() {
-            if (req.user.getCachedFeed().isPhotoCacheValid()) {
-                return Promise.resolve(req.user.getCachedFeed().getCachedPhotos());
-            } else {
-                return db.sequelize.query("SELECT p.*, u.username FROM Photoes p INNER JOIN FeedsPhotoes fp ON fp.PhotoId = p.id INNER JOIN Users u ON p.UserId = u.id WHERE fp.FeedId = ?", db.Photo, {}, [req.user.getCachedFeed().id]).then(function(allPhotos) {
-                    req.user.getCachedFeed().setPhotoCache(allPhotos);
-                    return allPhotos;
-                });
-            }
-        };
-
-        getCachePhotos().then(function(allPhotos) {
+        db.sequelize.query("SELECT p.*, u.username FROM Photoes p INNER JOIN FeedsPhotoes fp ON fp.PhotoId = p.id INNER JOIN Users u ON p.UserId = u.id WHERE fp.FeedId = ?", db.Photo, {}, [req.user.getCachedFeed().id]).then(function(allPhotos) {
             var offset = (page - 1) * pageSize;
             var photos = _.sortBy(allPhotos, ['createdAt', 'id']).reverse().slice(offset, offset + pageSize);
             photos.map(function(photo) {
