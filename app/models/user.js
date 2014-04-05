@@ -1,5 +1,6 @@
 var Promise = require('bluebird'),
     NodeCache = require('node-cache'),
+    _ = require('lodash'),
     userCache = new NodeCache(),
     async = require('async');
 
@@ -98,7 +99,7 @@ module.exports = function(sequelize, DataTypes) {
 
                 if (!this.__followerIds) {
                     return sequelize.query("SELECT uf.FollowerId FROM UserFollowers uf WHERE uf.UserId = ?", null, {raw: true}, [this.id]).then(function(ids) {
-                        _this.__followerIds = ids;
+                        _this.__followerIds = _.pluck(ids, 'FollowerId');
                     }).then(loadFollowers);
                 } else {
                     return loadFollowers();
