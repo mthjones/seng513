@@ -32,7 +32,7 @@ module.exports = function(sequelize, DataTypes) {
                         if (err) reject(err);
                         if (Object.keys(photo).length === 0) {
                             Photo.find(id).then(function(photo) {
-                                photoCache.set(photo.id.toString(), photo, function(err, success) {
+                                photoCache.set(id.toString(), photo, function(err, success) {
                                     resolve(photo);
                                 });
                             });
