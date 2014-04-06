@@ -83,6 +83,7 @@ module.exports = {
                     photoPromises.push(db.Photo.f(rawPhoto.id).then(function(photo) {
                         return db.User.f(photo.UserId).then(function(user) {
                             user.updateFollowers(photo);
+                            photo.createThumb();
                             return user.getCachedFeed().addPhoto(photo);
                         });
                     }));
