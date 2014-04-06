@@ -23,11 +23,11 @@ describe('Users Controller', function() {
         it('Follow called with param id', function() {
             var followeeMock = {};
             var addFollowerPromise = Promise.resolve();
-            var addFollowerMock = sinon.stub().returns(addFollowerPromise);
-            followeeMock.addFollower = addFollowerMock;
+            followeeMock.addFollower = sinon.stub().returns(addFollowerPromise);
+            followeeMock.invalidateFollowers = sinon.stub();
             var resolvedPromise = Promise.resolve(followeeMock);
             var findMock = sinon.stub().returns(resolvedPromise);
-            db.User = {find: findMock, then: sinon.stub()};
+            db.User = {f: findMock, then: sinon.stub()};
             
             ctrl.follow(requestMock, responseMock, nextMock);
             expect(findMock).to.have.been.calledWith(1);
@@ -38,7 +38,7 @@ describe('Users Controller', function() {
             {
                 var resolvedPromise = Promise.resolve(null);
                 var findMock = sinon.stub().returns(resolvedPromise);
-                db.User = {find: findMock, then: sinon.stub()};
+                db.User = {f: findMock, then: sinon.stub()};
                 
                 ctrl.follow(requestMock, responseMock, nextMock);
                 
@@ -51,7 +51,7 @@ describe('Users Controller', function() {
             {
                 var resolvedPromise = Promise.resolve(null);
                 var findMock = sinon.stub().returns(resolvedPromise);
-                db.User = {find: findMock, then: sinon.stub()};
+                db.User = {f: findMock, then: sinon.stub()};
                 ctrl.follow(requestMock, responseMock, nextMock);
                 
                 return resolvedPromise.then(function() {
@@ -65,13 +65,13 @@ describe('Users Controller', function() {
             {
                 var followeeMock = {};
                 var addFollowerPromise = Promise.resolve();
-                var addFollowerMock = sinon.stub().returns(addFollowerPromise);
-                followeeMock.addFollower = addFollowerMock;
-            
-                var addFollowerPromise = Promise.resolve();
+                followeeMock.addFollower = sinon.stub().returns(addFollowerPromise);
+                followeeMock.invalidateFollowers = sinon.stub();
+
                 var resolvedPromise = Promise.resolve(followeeMock);
                 var findMock = sinon.stub().returns(resolvedPromise);
-                db.User = {find: findMock, then: sinon.stub()};
+                db.User = {f: findMock};
+
                 ctrl.follow(requestMock, responseMock, nextMock);
                 
                 return resolvedPromise.then(function() {
@@ -83,13 +83,13 @@ describe('Users Controller', function() {
             {
                 var followeeMock = {};
                 var addFollowerPromise = Promise.resolve();
-                var addFollowerMock = sinon.stub().returns(addFollowerPromise);
-                followeeMock.addFollower = addFollowerMock;
-            
-                var addFollowerPromise = Promise.resolve();
+                followeeMock.addFollower = sinon.stub().returns(addFollowerPromise);
+                followeeMock.invalidateFollowers = sinon.stub();
+
                 var resolvedPromise = Promise.resolve(followeeMock);
                 var findMock = sinon.stub().returns(resolvedPromise);
-                db.User = {find: findMock, then: sinon.stub()};
+                db.User = {f: findMock};
+
                 ctrl.follow(requestMock, responseMock, nextMock);
                 
                 return resolvedPromise.then(function() {
