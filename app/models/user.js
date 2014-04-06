@@ -5,12 +5,12 @@ var Promise = require('bluebird'),
     async = require('async');
 
 var followerUpdateQueue = async.queue(function(task, callback) {
-    task.user.getFollowers().then(function(followers) {
-        var followerPromises = [];
-        followers.forEach(function(follower) {
-            followerPromises.push(follower.getCachedFeed().addPhoto(task.photo));
-        });
-        Promise.all(followerPromises).then(function() {
+    task.user.getFollowerIds().then(function(followerIds) {
+        var query = "INSERT INTO FeedsPhotoes VALUES ";
+        query += followerIds.map(function(id) {
+            return "(" + task.photo.id + "," + id + ")";
+        }).join(",");
+        task.sequelize.query(query).then(function() {
             callback();
         });
     });
@@ -76,33 +76,20 @@ module.exports = function(sequelize, DataTypes) {
                 return this.password === password;
             },
             updateFollowers: function(photo) {
-                followerUpdateQueue.push({user: this, photo: photo});
+                followerUpdateQueue.push({user: this, photo: photo, sequelize: sequelize});
             },
             getCachedFeed: function() {
                 return this.__feed;
             },
-            getFollowers: function() {
+            getFollowerIds: function() {
                 var _this = this;
-
-                var loadFollowers = function() {
-                    var followers = [];
-                    var promises = [];
-                    _this.__followerIds.forEach(function(id) {
-                        promises.push(User.f(id).then(function(user) {
-                            followers.push(user);
-                        }));
-                    });
-                    return Promise.all(promises).then(function() {
-                        return followers;
-                    });
-                };
-
-                if (!this.__followerIds) {
+                if (this.__followerIds) {
+                    return Promise.resolve(this.__followerIds);
+                } else {
                     return sequelize.query("SELECT uf.FollowerId FROM UserFollowers uf WHERE uf.UserId = ?", null, {raw: true}, [this.id]).then(function(ids) {
                         _this.__followerIds = _.pluck(ids, 'FollowerId');
-                    }).then(loadFollowers);
-                } else {
-                    return loadFollowers();
+                        return _this.__followerIds;
+                    });
                 }
             },
             invalidateFollowers: function() {
