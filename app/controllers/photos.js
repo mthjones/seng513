@@ -44,10 +44,13 @@ module.exports = {
             res.redirect(302, '/photos/new');
         } else {
             db.Photo.create({filepath: req.files.image.path, name: req.files.image.name, contentType: req.files.image.type, ext: path.extname(req.files.image.name).split('.').pop()}).then(function(photo) {
-                res.redirect(302, '/feed');
-                req.user.getCachedFeed().addPhoto(photo);
+                Promise.all([
+                    req.user.getCachedFeed().addPhoto(photo),
+                    photo.createThumb()
+                ]).then(function() {
+                    res.redirect(302, '/feed');
+                });
                 req.user.addPhoto(photo);
-                photo.createThumb();
                 req.user.updateFollowers(photo);
             });
         }
